@@ -1,0 +1,3079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HRF – Homeopathy Research Foundation | Healthcare Operating System</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+<style>
+:root {
+  --bg-deep: #030712;
+  --bg-surface: #070b16;
+  --bg-elevated: #0d1424;
+  --emerald: #10b981;
+  --emerald-light: #34d399;
+  --emerald-dark: #059669;
+  --blue: #0ea5e9;
+  --blue-light: #38bdf8;
+  --blue-dark: #0284c7;
+  --white: #f8fafc;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --red: #ef4444;
+  --red-light: #f87171;
+  --purple: #a855f7;
+  --amber: #f59e0b;
+  --pink: #ec4899;
+  --border: rgba(255, 255, 255, 0.08);
+  --glass: rgba(255, 255, 255, 0.03);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.font-display { font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
+.font-mono { font-family: 'JetBrains Mono', monospace; }
+
+/* Glassmorphism */
+.glass {
+  background: rgba(13, 20, 36, 0.5);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-strong {
+  background: rgba(7, 11, 22, 0.85);
+  backdrop-filter: blur(30px) saturate(200%);
+  -webkit-backdrop-filter: blur(30px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(255,255,255,0.02));
+  transform: translateY(-4px);
+}
+
+/* Background effects */
+.bg-grid {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(16, 185, 129, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+}
+
+.bg-orb {
+  position: fixed; border-radius: 50%; filter: blur(100px); pointer-events: none; z-index: 0;
+  animation: orb-float 20s ease-in-out infinite;
+}
+
+@keyframes orb-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(50px, -30px) scale(1.1); }
+  66% { transform: translate(-30px, 40px) scale(0.95); }
+}
+
+/* Animations */
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 1; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+@keyframes scan-line {
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-float { animation: float 5s ease-in-out infinite; }
+.animate-blink { animation: blink 2s ease-in-out infinite; }
+
+.text-gradient {
+  background: linear-gradient(135deg, #10b981, #38bdf8, #10b981);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient-shift 5s ease infinite;
+}
+
+.text-glow { text-shadow: 0 0 30px rgba(16, 185, 129, 0.5); }
+
+/* Scroll reveal */
+.reveal { opacity: 0; transform: translateY(40px); transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.3); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(16, 185, 129, 0.5); }
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--emerald), var(--emerald-dark));
+  color: white; padding: 14px 28px; border-radius: 12px;
+  font-weight: 600; font-size: 14px; transition: all 0.3s ease;
+  box-shadow: 0 4px 24px rgba(16, 185, 129, 0.35), inset 0 1px 0 rgba(255,255,255,0.2);
+  border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  position: relative; overflow: hidden;
+}
+.btn-primary::before {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0; transition: opacity 0.3s;
+}
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(16, 185, 129, 0.5); }
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-primary); padding: 14px 28px; border-radius: 12px;
+  font-weight: 600; font-size: 14px; transition: all 0.3s ease;
+  cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  backdrop-filter: blur(10px);
+}
+.btn-secondary:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.25); transform: translateY(-2px); }
+
+.btn-ghost {
+  background: transparent; border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--emerald-light); padding: 10px 20px; border-radius: 10px;
+  font-weight: 500; font-size: 13px; transition: all 0.3s ease; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-ghost:hover { background: rgba(16, 185, 129, 0.1); border-color: var(--emerald); }
+
+/* Body SVG regions */
+.body-region {
+  fill: rgba(255, 255, 255, 0.04);
+  stroke: rgba(16, 185, 129, 0.35);
+  stroke-width: 1.5;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+.body-region:hover {
+  fill: rgba(16, 185, 129, 0.15);
+  stroke: rgba(16, 185, 129, 0.7);
+}
+.body-region.selected {
+  fill: rgba(239, 68, 68, 0.35);
+  stroke: rgba(239, 68, 68, 0.9);
+  filter: drop-shadow(0 0 10px rgba(239, 68, 68, 0.6));
+}
+
+/* Checkbox */
+.symptom-check {
+  display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+  border-radius: 12px; cursor: pointer; transition: all 0.3s ease;
+  border: 1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02);
+}
+.symptom-check:hover { background: rgba(16, 185, 129, 0.05); border-color: rgba(16, 185, 129, 0.2); }
+.symptom-check.active { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.4); }
+.symptom-check .check-box {
+  width: 22px; height: 22px; border-radius: 7px; border: 2px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0;
+}
+.symptom-check.active .check-box { background: var(--emerald); border-color: var(--emerald); }
+.symptom-check .check-box i { opacity: 0; color: white; font-size: 11px; transition: opacity 0.2s; }
+.symptom-check.active .check-box i { opacity: 1; }
+
+/* Step indicator */
+.step-dot {
+  width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 600; transition: all 0.4s ease;
+  border: 2px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.03); color: var(--text-muted);
+}
+.step-dot.active { border-color: var(--emerald); background: var(--emerald); color: white; box-shadow: 0 0 20px rgba(16,185,129,0.4); }
+.step-dot.completed { border-color: var(--emerald); background: rgba(16,185,129,0.2); color: var(--emerald-light); }
+
+/* Slider */
+.severity-slider {
+  -webkit-appearance: none; width: 100%; height: 8px; border-radius: 4px;
+  background: linear-gradient(to right, #10b981, #f59e0b, #ef4444);
+  outline: none;
+}
+.severity-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 24px; height: 24px; border-radius: 50%;
+  background: white; cursor: pointer; box-shadow: 0 0 0 4px rgba(16,185,129,0.3), 0 4px 12px rgba(0,0,0,0.4);
+  border: 3px solid var(--emerald);
+}
+
+/* Drawer */
+.drawer-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px);
+  z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.drawer-overlay.open { opacity: 1; pointer-events: auto; }
+.drawer {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 480px; max-width: 100vw;
+  z-index: 101; transform: translateX(100%); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+.drawer.open { transform: translateX(0); }
+
+/* Modal */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+  z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal {
+  transform: scale(0.95) translateY(20px); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+/* System card */
+.system-card {
+  position: relative; overflow: hidden; cursor: pointer;
+}
+.system-card::before {
+  content: ''; position: absolute; inset: 0; opacity: 0; transition: opacity 0.4s;
+  background: radial-gradient(circle at 50% 0%, var(--system-color, rgba(16,185,129,0.15)), transparent 70%);
+}
+.system-card:hover::before, .system-card.active::before { opacity: 1; }
+.system-card.active { border-color: var(--system-color, rgba(16,185,129,0.4)); }
+
+/* Floating label */
+.floating-label {
+  position: absolute; pointer-events: none; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+  color: var(--text-secondary); white-space: nowrap;
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Pulse ring */
+.pulse-ring {
+  position: absolute; border: 2px solid var(--emerald); border-radius: 50%;
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* Scan line */
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--emerald), transparent);
+  animation: scan-line 4s ease-in-out infinite;
+}
+
+/* Tab */
+.tab-btn {
+  padding: 12px 24px; border-radius: 10px; font-weight: 500; font-size: 14px;
+  transition: all 0.3s; cursor: pointer; border: 1px solid transparent; color: var(--text-secondary);
+}
+.tab-btn.active { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); color: var(--emerald-light); }
+
+/* Form input */
+.form-input {
+  width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 12px 16px; color: var(--text-primary); font-size: 14px;
+  transition: all 0.3s; font-family: inherit;
+}
+.form-input:focus { outline: none; border-color: var(--emerald); background: rgba(16,185,129,0.05); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+.form-input::placeholder { color: var(--text-muted); }
+.form-label { font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; display: block; font-weight: 500; }
+
+/* Hide scrollbar for horizontal scroll */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Hero canvas */
+#body3d { width: 100%; height: 100%; cursor: grab; }
+#body3d:active { cursor: grabbing; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 30px; right: 30px; z-index: 300;
+  padding: 16px 24px; border-radius: 12px;
+  background: rgba(13, 20, 36, 0.95); backdrop-filter: blur(20px);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  display: flex; align-items: center; gap: 12px;
+  transform: translateY(100px); opacity: 0; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-center { display: none; }
+  .hero-grid { grid-template-columns: 1fr !important; }
+  .drawer { width: 100vw; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-grid"></div>
+<div class="bg-orb" style="top:10%;left:5%;width:500px;height:500px;background:radial-gradient(circle,rgba(16,185,129,0.12),transparent 70%);"></div>
+<div class="bg-orb" style="bottom:10%;right:5%;width:600px;height:600px;background:radial-gradient(circle,rgba(14,165,233,0.1),transparent 70%);animation-delay:-7s;"></div>
+<div class="bg-orb" style="top:50%;left:50%;width:400px;height:400px;background:radial-gradient(circle,rgba(168,85,247,0.06),transparent 70%);animation-delay:-14s;"></div>
+
+<!-- ==================== NAVBAR ==================== -->
+<nav class="fixed top-0 left-0 right-0 z-50 glass-strong">
+  <div class="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#hero" class="flex items-center gap-3 group">
+      <div class="relative w-11 h-11 flex items-center justify-center">
+        <div class="absolute inset-0 rounded-xl bg-gradient-to-br from-emerald-500 to-blue-500 opacity-90"></div>
+        <div class="absolute inset-0.5 rounded-xl bg-slate-950 flex items-center justify-center">
+          <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none">
+            <path d="M12 2L12 22M6 6L18 18M6 18L18 6" stroke="url(#logoGrad)" stroke-width="1.5" stroke-linecap="round"/>
+            <circle cx="12" cy="12" r="3" fill="url(#logoGrad)"/>
+            <defs>
+              <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#34d399"/>
+                <stop offset="100%" stop-color="#38bdf8"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+      <div>
+        <div class="font-display font-bold text-lg leading-none">HRF</div>
+        <div class="text-[10px] text-slate-400 leading-none mt-1 tracking-wider">HOMEOPATHY RESEARCH FOUNDATION</div>
+      </div>
+    </a>
+
+    <!-- Center Nav -->
+    <div class="nav-center hidden md:flex items-center gap-1 glass rounded-full px-2 py-1.5">
+      <a href="#hero" class="px-4 py-2 text-sm text-slate-300 hover:text-emerald-400 rounded-full hover:bg-white/5 transition">Home</a>
+      <a href="#systems" class="px-4 py-2 text-sm text-slate-300 hover:text-emerald-400 rounded-full hover:bg-white/5 transition">Conditions</a>
+      <a href="#anatomy" class="px-4 py-2 text-sm text-slate-300 hover:text-emerald-400 rounded-full hover:bg-white/5 transition">Anatomy Explorer</a>
+      <a href="#doctors" class="px-4 py-2 text-sm text-slate-300 hover:text-emerald-400 rounded-full hover:bg-white/5 transition">Doctors</a>
+      <a href="#webinars" class="px-4 py-2 text-sm text-slate-300 hover:text-emerald-400 rounded-full hover:bg-white/5 transition">Webinars</a>
+      <a href="#contact" class="px-4 py-2 text-sm text-slate-300 hover:text-emerald-400 rounded-full hover:bg-white/5 transition">Contact</a>
+    </div>
+
+    <!-- Right -->
+    <div class="flex items-center gap-3">
+      <button onclick="openLoginModal()" class="btn-primary text-sm">
+        <i class="fas fa-user-shield"></i>
+        Login
+      </button>
+      <button class="md:hidden text-slate-300 text-xl" onclick="toggleMobileNav()">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </div>
+  
+  <!-- Mobile nav -->
+  <div id="mobileNav" class="hidden md:hidden px-6 pb-4 space-y-2">
+    <a href="#hero" class="block py-2 text-slate-300">Home</a>
+    <a href="#systems" class="block py-2 text-slate-300">Conditions</a>
+    <a href="#anatomy" class="block py-2 text-slate-300">Anatomy Explorer</a>
+    <a href="#doctors" class="block py-2 text-slate-300">Doctors</a>
+    <a href="#webinars" class="block py-2 text-slate-300">Webinars</a>
+    <a href="#contact" class="block py-2 text-slate-300">Contact</a>
+  </div>
+</nav>
+
+<!-- ==================== HERO: 3D HUMAN BODY ==================== -->
+<section id="hero" class="relative min-h-screen pt-24 pb-12 overflow-hidden">
+  <div class="max-w-7xl mx-auto px-6">
+    <!-- Top status bar -->
+    <div class="flex items-center justify-between mb-6 reveal">
+      <div class="flex items-center gap-4 text-xs font-mono text-slate-400">
+        <span class="flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-blink"></span>
+          SYSTEM ONLINE
+        </span>
+        <span class="hidden sm:inline">v3.0.1</span>
+        <span class="hidden sm:inline">SECURE LINK</span>
+      </div>
+      <div class="flex items-center gap-3 text-xs font-mono text-slate-400">
+        <span id="liveTime"></span>
+        <span class="hidden sm:flex items-center gap-1"><i class="fas fa-shield-check text-emerald-500"></i> HIPAA</span>
+      </div>
+    </div>
+
+    <div class="hero-grid grid grid-cols-12 gap-6 items-center">
+      <!-- Left: Text content -->
+      <div class="col-span-12 lg:col-span-5 space-y-6 reveal">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-emerald-400">
+          <i class="fas fa-circle text-[6px]"></i>
+          HEALTHCARE OPERATING SYSTEM
+        </div>
+        
+        <h1 class="font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05]">
+          <span class="text-white">Understand</span><br>
+          <span class="text-white">Your</span> <span class="text-gradient">Pain.</span><br>
+          <span class="text-white">Visualize</span><br>
+          <span class="text-white">Your</span> <span class="text-gradient">Body.</span>
+        </h1>
+
+        <p class="text-lg text-slate-400 max-w-md leading-relaxed">
+          Interactive anatomy mapping for personalized healthcare consultations. Powered by precision homeopathy research.
+        </p>
+
+        <div class="flex flex-wrap gap-3">
+          <button onclick="scrollToSection('systems')" class="btn-primary">
+            <i class="fas fa-play"></i>
+            Start Assessment
+          </button>
+          <button onclick="scrollToSection('general-consult')" class="btn-secondary">
+            <i class="fas fa-stethoscope"></i>
+            Book General Consultation
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid grid-cols-3 gap-4 pt-6">
+          <div>
+            <div class="font-display font-bold text-3xl text-gradient">50K+</div>
+            <div class="text-xs text-slate-500 mt-1">Patients Treated</div>
+          </div>
+          <div>
+            <div class="font-display font-bold text-3xl text-gradient">8</div>
+            <div class="text-xs text-slate-500 mt-1">Body Systems</div>
+          </div>
+          <div>
+            <div class="font-display font-bold text-3xl text-gradient">15+</div>
+            <div class="text-xs text-slate-500 mt-1">Specialist Doctors</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: 3D Body -->
+      <div class="col-span-12 lg:col-span-7 relative">
+        <div class="relative" style="height: 600px;">
+          <!-- 3D Canvas -->
+          <canvas id="body3d"></canvas>
+          
+          <!-- Scan line overlay -->
+          <div class="scan-line" style="top: 30%;"></div>
+          
+          <!-- Floating labels -->
+          <div class="floating-label" style="top: 15%; left: 10%;">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-purple-400"></span>
+              BRAIN
+            </div>
+          </div>
+          <div class="floating-label" style="top: 35%; right: 8%; animation-delay: -1s;">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-red-400"></span>
+              HEART
+            </div>
+          </div>
+          <div class="floating-label" style="top: 45%; left: 5%; animation-delay: -2s;">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+              LUNGS
+            </div>
+          </div>
+          <div class="floating-label" style="top: 55%; right: 12%; animation-delay: -3s;">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+              LIVER
+            </div>
+          </div>
+          <div class="floating-label" style="top: 62%; left: 8%; animation-delay: -1.5s;">
+            <div class="flex items-center gap-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-violet-400"></span>
+              KIDNEYS
+            </div>
+          </div>
+
+          <!-- Body system quick selector -->
+          <div class="absolute bottom-0 left-0 right-0 flex justify-center gap-2 flex-wrap pb-2">
+            <button onclick="highlightSystem('nervous')" class="px-3 py-1.5 rounded-lg glass text-xs text-slate-300 hover:text-purple-400 transition flex items-center gap-1.5">
+              <i class="fas fa-brain text-purple-400"></i> Nervous
+            </button>
+            <button onclick="highlightSystem('respiratory')" class="px-3 py-1.5 rounded-lg glass text-xs text-slate-300 hover:text-blue-400 transition flex items-center gap-1.5">
+              <i class="fas fa-lungs text-blue-400"></i> Respiratory
+            </button>
+            <button onclick="highlightSystem('cardiovascular')" class="px-3 py-1.5 rounded-lg glass text-xs text-slate-300 hover:text-red-400 transition flex items-center gap-1.5">
+              <i class="fas fa-heart text-red-400"></i> Cardio
+            </button>
+            <button onclick="highlightSystem('endocrine')" class="px-3 py-1.5 rounded-lg glass text-xs text-slate-300 hover:text-pink-400 transition flex items-center gap-1.5">
+              <i class="fas fa-flask text-pink-400"></i> Endocrine
+            </button>
+            <button onclick="highlightSystem('digestive')" class="px-3 py-1.5 rounded-lg glass text-xs text-slate-300 hover:text-emerald-400 transition flex items-center gap-1.5">
+              <i class="fas fa-bolt text-emerald-400"></i> Digestive
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-slate-500 text-xs">
+    <span class="font-mono">SCROLL TO EXPLORE</span>
+    <i class="fas fa-chevron-down animate-bounce"></i>
+  </div>
+</section>
+
+<!-- ==================== BODY SYSTEMS NAVIGATION ==================== -->
+<section id="systems" class="relative py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-emerald-400 mb-4">
+        <i class="fas fa-circle text-[6px]"></i>
+        ANATOMY EXPLORER
+      </div>
+      <h2 class="font-display font-bold text-4xl md:text-5xl mb-4">
+        Explore <span class="text-gradient">Body Systems</span>
+      </h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        Click on any body system to discover associated conditions, symptoms, and pain mapping. The 3D body responds to your selection in real time.
+      </p>
+    </div>
+
+    <div id="systemsGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4 reveal">
+      <!-- Systems populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================== SELECTED SYSTEM DETAIL ==================== -->
+<section id="systemDetail" class="relative py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="glass-card rounded-3xl p-8 md:p-12 reveal">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-8">
+        <div class="flex items-center gap-4">
+          <div id="systemDetailIcon" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl" style="background:rgba(168,85,247,0.15);color:#a855f7;">
+            <i class="fas fa-brain"></i>
+          </div>
+          <div>
+            <div class="text-xs font-mono text-slate-500 mb-1">SELECTED SYSTEM</div>
+            <h3 id="systemDetailName" class="font-display font-bold text-3xl">Brain & Nervous System</h3>
+            <p id="systemDetailOrgan" class="text-slate-400 text-sm mt-1">Attached to: Brain</p>
+          </div>
+        </div>
+        <button onclick="startAssessment()" class="btn-primary">
+          <i class="fas fa-clipboard-list"></i>
+          Start Assessment
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Diseases -->
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i class="fas fa-disease text-red-400"></i>
+            <h4 class="font-display font-semibold text-lg">Diseases</h4>
+          </div>
+          <div id="systemDiseases" class="space-y-3">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Symptoms -->
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i class="fas fa-thermometer text-amber-400"></i>
+            <h4 class="font-display font-semibold text-lg">Common Symptoms</h4>
+          </div>
+          <div id="systemSymptoms" class="flex flex-wrap gap-2">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- Pain Areas -->
+        <div class="glass rounded-2xl p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i class="fas fa-location-crosshairs text-emerald-400"></i>
+            <h4 class="font-display font-semibold text-lg">Pain / Focus Areas</h4>
+          </div>
+          <div id="systemPainAreas" class="space-y-2">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== ANATOMY / 3D BODY NAVIGATION ==================== -->
+<section id="anatomy" class="relative py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-blue-400 mb-4">
+        <i class="fas fa-circle text-[6px]"></i>
+        INTERACTIVE ANATOMY
+      </div>
+      <h2 class="font-display font-bold text-4xl md:text-5xl mb-4">
+        The Body is Your <span class="text-gradient">Navigation</span>
+      </h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        Each body system connects to specific organs, diseases, and treatment pathways. Select a system to begin your interactive assessment.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 reveal">
+      <!-- Anatomy visual -->
+      <div class="glass-card rounded-3xl p-8 relative overflow-hidden" style="min-height: 500px;">
+        <div class="absolute top-4 left-4 flex items-center gap-2 text-xs font-mono text-slate-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-blink"></span>
+          ANATOMY VIEW
+        </div>
+        <div class="absolute top-4 right-4 text-xs font-mono text-slate-400">
+          ROTATION: <span id="rotationValue">0.00°</span>
+        </div>
+        <canvas id="body3dSmall" style="width:100%;height:100%;cursor:grab;"></canvas>
+        
+        <!-- System legend -->
+        <div class="absolute bottom-4 left-4 right-4 glass rounded-xl p-4">
+          <div id="systemLegend" class="text-sm text-slate-300">
+            <span class="text-slate-500">Hover or click the body to explore.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- System list -->
+      <div class="space-y-3">
+        <div id="anatomySystemList">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== INTERACTIVE ASSESSMENT FLOW ==================== -->
+<section id="assessment" class="relative py-24 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-emerald-400 mb-4">
+        <i class="fas fa-circle text-[6px]"></i>
+        ASSESSMENT WIZARD
+      </div>
+      <h2 class="font-display font-bold text-4xl md:text-5xl mb-4">
+        Interactive <span class="text-gradient">Assessment Flow</span>
+      </h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        A guided journey from body system to personalized consultation booking.
+      </p>
+    </div>
+
+    <!-- Step indicator -->
+    <div class="flex items-center justify-center gap-2 md:gap-4 mb-12 reveal" id="stepIndicator">
+      <div class="flex items-center gap-2 md:gap-3">
+        <div class="step-dot active" data-step="1">1</div>
+        <span class="text-xs text-slate-400 hidden md:inline">Body System</span>
+      </div>
+      <div class="w-8 md:w-16 h-0.5 bg-white/10"></div>
+      <div class="flex items-center gap-2 md:gap-3">
+        <div class="step-dot" data-step="2">2</div>
+        <span class="text-xs text-slate-400 hidden md:inline">Disease</span>
+      </div>
+      <div class="w-8 md:w-16 h-0.5 bg-white/10"></div>
+      <div class="flex items-center gap-2 md:gap-3">
+        <div class="step-dot" data-step="3">3</div>
+        <span class="text-xs text-slate-400 hidden md:inline">Symptoms</span>
+      </div>
+      <div class="w-8 md:w-16 h-0.5 bg-white/10"></div>
+      <div class="flex items-center gap-2 md:gap-3">
+        <div class="step-dot" data-step="4">4</div>
+        <span class="text-xs text-slate-400 hidden md:inline">Pain Map</span>
+      </div>
+      <div class="w-8 md:w-16 h-0.5 bg-white/10"></div>
+      <div class="flex items-center gap-2 md:gap-3">
+        <div class="step-dot" data-step="5">5</div>
+        <span class="text-xs text-slate-400 hidden md:inline">Booking</span>
+      </div>
+    </div>
+
+    <!-- Step content -->
+    <div class="glass-card rounded-3xl p-8 md:p-12 reveal" id="assessmentContent">
+      
+      <!-- Step 1: Body System -->
+      <div id="step1" class="assessment-step">
+        <h3 class="font-display font-bold text-2xl mb-2">Select Body System</h3>
+        <p class="text-slate-400 mb-8 text-sm">Choose the body system you want to assess.</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="step1Systems">
+          <!-- Populated by JS -->
+        </div>
+        <div class="flex justify-end mt-8">
+          <button onclick="nextStep()" class="btn-primary" id="step1Next" disabled style="opacity:0.5;pointer-events:none;">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 2: Disease -->
+      <div id="step2" class="assessment-step hidden">
+        <h3 class="font-display font-bold text-2xl mb-2">Select Disease / Condition</h3>
+        <p class="text-slate-400 mb-8 text-sm">Which condition are you experiencing?</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="step2Diseases">
+          <!-- Populated by JS -->
+        </div>
+        <div class="flex justify-between mt-8">
+          <button onclick="prevStep()" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back</button>
+          <button onclick="nextStep()" class="btn-primary" id="step2Next" disabled style="opacity:0.5;pointer-events:none;">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Symptoms -->
+      <div id="step3" class="assessment-step hidden">
+        <h3 class="font-display font-bold text-2xl mb-2">Select Your Symptoms</h3>
+        <p class="text-slate-400 mb-8 text-sm">Check all symptoms that apply to you.</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="step3Symptoms">
+          <!-- Populated by JS -->
+        </div>
+        <div class="flex justify-between mt-8">
+          <button onclick="prevStep()" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back</button>
+          <button onclick="nextStep()" class="btn-primary" id="step3Next" disabled style="opacity:0.5;pointer-events:none;">
+            Next <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 4: Pain Mapper -->
+      <div id="step4" class="assessment-step hidden">
+        <h3 class="font-display font-bold text-2xl mb-2">Map Your Pain</h3>
+        <p class="text-slate-400 mb-8 text-sm">Click on body regions where you feel pain. Set intensity and duration.</p>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Body SVG -->
+          <div>
+            <div class="flex items-center gap-2 mb-4">
+              <button onclick="setBodyView('front')" id="frontViewBtn" class="tab-btn active">Front View</button>
+              <button onclick="setBodyView('back')" id="backViewBtn" class="tab-btn">Back View</button>
+            </div>
+            <div class="glass rounded-2xl p-6 flex justify-center">
+              <div id="bodyFront" class="body-svg-container">
+                <!-- SVG front view -->
+              </div>
+              <div id="bodyBack" class="body-svg-container hidden">
+                <!-- SVG back view -->
+              </div>
+            </div>
+            <div class="mt-4 text-xs text-slate-400 font-mono">
+              SELECTED: <span id="selectedPainAreas" class="text-red-400">None</span>
+            </div>
+          </div>
+
+          <!-- Intensity & Duration -->
+          <div class="space-y-6">
+            <div class="glass rounded-2xl p-6">
+              <div class="flex items-center justify-between mb-4">
+                <h4 class="font-display font-semibold text-lg">Pain Intensity</h4>
+                <div class="font-display font-bold text-3xl" id="intensityValue">5</div>
+              </div>
+              <input type="range" min="1" max="10" value="5" class="severity-slider" id="intensitySlider" oninput="updateIntensity(this.value)">
+              <div class="flex justify-between text-xs text-slate-500 mt-2">
+                <span>Mild</span>
+                <span>Moderate</span>
+                <span>Severe</span>
+              </div>
+              <div class="mt-4 flex gap-1.5">
+                <div class="flex-1 h-2 rounded-full bg-emerald-500" id="intensityBar"></div>
+              </div>
+            </div>
+
+            <div class="glass rounded-2xl p-6">
+              <h4 class="font-display font-semibold text-lg mb-4">Duration</h4>
+              <div class="space-y-2" id="durationOptions">
+                <label class="symptom-check" onclick="selectDuration(this, 'Less than 1 Week')">
+                  <div class="check-box"><i class="fas fa-check"></i></div>
+                  <span>Less than 1 Week</span>
+                </label>
+                <label class="symptom-check" onclick="selectDuration(this, '1–4 Weeks')">
+                  <div class="check-box"><i class="fas fa-check"></i></div>
+                  <span>1–4 Weeks</span>
+                </label>
+                <label class="symptom-check" onclick="selectDuration(this, '1–6 Months')">
+                  <div class="check-box"><i class="fas fa-check"></i></div>
+                  <span>1–6 Months</span>
+                </label>
+                <label class="symptom-check" onclick="selectDuration(this, 'More than 6 Months')">
+                  <div class="check-box"><i class="fas fa-check"></i></div>
+                  <span>More than 6 Months</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex justify-between mt-8">
+          <button onclick="prevStep()" class="btn-secondary"><i class="fas fa-arrow-left"></i> Back</button>
+          <button onclick="openConsultationDrawer()" class="btn-primary">
+            <i class="fas fa-calendar-check"></i>
+            Proceed to Booking
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 5: Summary (shown briefly before drawer) -->
+      <div id="step5" class="assessment-step hidden">
+        <div class="text-center py-12">
+          <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-500/20 flex items-center justify-center">
+            <i class="fas fa-check text-3xl text-emerald-400"></i>
+          </div>
+          <h3 class="font-display font-bold text-3xl mb-3">Assessment Complete</h3>
+          <p class="text-slate-400 mb-8">Opening your smart consultation form...</p>
+          <div class="max-w-md mx-auto glass rounded-2xl p-6 text-left space-y-2 text-sm">
+            <div class="flex justify-between"><span class="text-slate-500">Body System:</span> <span id="summarySystem" class="text-emerald-400 font-medium"></span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Disease:</span> <span id="summaryDisease" class="text-emerald-400 font-medium"></span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Symptoms:</span> <span id="summarySymptoms" class="text-emerald-400 font-medium"></span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Pain Areas:</span> <span id="summaryPain" class="text-emerald-400 font-medium"></span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Intensity:</span> <span id="summaryIntensity" class="text-emerald-400 font-medium"></span></div>
+            <div class="flex justify-between"><span class="text-slate-500">Duration:</span> <span id="summaryDuration" class="text-emerald-400 font-medium"></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ==================== GENERAL CONSULTATION ==================== -->
+<section id="general-consult" class="relative py-24 px-6">
+  <div class="max-w-5xl mx-auto">
+    <div class="glass-card rounded-3xl p-8 md:p-12 reveal">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-blue-400 mb-4">
+            <i class="fas fa-circle text-[6px]"></i>
+            NOT SURE?
+          </div>
+          <h2 class="font-display font-bold text-3xl md:text-4xl mb-4">
+            Not Sure What <span class="text-gradient">Condition</span> You Have?
+          </h2>
+          <p class="text-slate-400 mb-6">
+            Book a general consultation with our specialists. We'll help diagnose your concerns and create a personalized treatment plan.
+          </p>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 text-sm text-slate-300">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><i class="fas fa-user-md text-emerald-400 text-sm"></i></div>
+              Expert homeopathy specialists
+            </div>
+            <div class="flex items-center gap-3 text-sm text-slate-300">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><i class="fas fa-clock text-emerald-400 text-sm"></i></div>
+              Flexible scheduling options
+            </div>
+            <div class="flex items-center gap-3 text-sm text-slate-300">
+              <div class="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center"><i class="fas fa-video text-emerald-400 text-sm"></i></div>
+              Video, phone, or in-person
+            </div>
+          </div>
+        </div>
+
+        <form id="generalConsultForm" class="space-y-4" onsubmit="submitGeneralConsult(event)">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="form-label">Full Name</label>
+              <input type="text" class="form-input" placeholder="John Doe" required>
+            </div>
+            <div>
+              <label class="form-label">Phone</label>
+              <input type="tel" class="form-input" placeholder="+1 234 567 8900" required>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" placeholder="john@example.com" required>
+          </div>
+          <div>
+            <label class="form-label">Your Concern</label>
+            <textarea class="form-input" rows="3" placeholder="Describe your symptoms or health concern..." required></textarea>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="form-label">Preferred Date</label>
+              <input type="date" class="form-input" required>
+            </div>
+            <div>
+              <label class="form-label">Preferred Time</label>
+              <select class="form-input" required>
+                <option value="">Select time</option>
+                <option>09:00 AM – 10:00 AM</option>
+                <option>10:00 AM – 11:00 AM</option>
+                <option>11:00 AM – 12:00 PM</option>
+                <option>02:00 PM – 03:00 PM</option>
+                <option>03:00 PM – 04:00 PM</option>
+                <option>04:00 PM – 05:00 PM</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn-primary w-full justify-center">
+            <i class="fas fa-calendar-check"></i>
+            Book Consultation
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== OPENEMR PORTALS ==================== -->
+<section id="portals" class="relative py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-emerald-400 mb-4">
+        <i class="fas fa-circle text-[6px]"></i>
+        OPENEMR INTEGRATED
+      </div>
+      <h2 class="font-display font-bold text-4xl md:text-5xl mb-4">
+        Healthcare <span class="text-gradient">Operating System</span>
+      </h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        A unified platform connecting patients and doctors through OpenEMR integration.
+      </p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex justify-center gap-2 mb-12 reveal">
+      <button onclick="switchPortal('patient')" id="patientTab" class="tab-btn active">
+        <i class="fas fa-user mr-2"></i>Patient Portal
+      </button>
+      <button onclick="switchPortal('doctor')" id="doctorTab" class="tab-btn">
+        <i class="fas fa-user-md mr-2"></i>Doctor Portal
+      </button>
+    </div>
+
+    <!-- Patient Portal -->
+    <div id="patientPortal" class="portal-content reveal">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <i class="fas fa-calendar-check text-emerald-400 text-xl"></i>
+            <span class="text-xs text-emerald-400 font-mono">+2</span>
+          </div>
+          <div class="font-display font-bold text-2xl">12</div>
+          <div class="text-xs text-slate-400 mt-1">Appointments</div>
+        </div>
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <i class="fas fa-prescription text-blue-400 text-xl"></i>
+            <span class="text-xs text-blue-400 font-mono">ACTIVE</span>
+          </div>
+          <div class="font-display font-bold text-2xl">5</div>
+          <div class="text-xs text-slate-400 mt-1">Prescriptions</div>
+        </div>
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <i class="fas fa-file-medical text-purple-400 text-xl"></i>
+            <span class="text-xs text-purple-400 font-mono">SYNCED</span>
+          </div>
+          <div class="font-display font-bold text-2xl">8</div>
+          <div class="text-xs text-slate-400 mt-1">Medical Records</div>
+        </div>
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <i class="fas fa-video text-red-400 text-xl"></i>
+            <span class="text-xs text-red-400 font-mono animate-blink">LIVE</span>
+          </div>
+          <div class="font-display font-bold text-2xl">3</div>
+          <div class="text-xs text-slate-400 mt-1">Upcoming Calls</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Feature grid -->
+        <div class="lg:col-span-2 grid grid-cols-2 gap-4">
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-calendar-day text-emerald-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">My Appointments</h4>
+            <p class="text-xs text-slate-400">View and manage upcoming visits</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-prescription-bottle text-blue-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Prescriptions</h4>
+            <p class="text-xs text-slate-400">Active medications and dosages</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-file-medical-alt text-purple-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Medical Records</h4>
+            <p class="text-xs text-slate-400">Complete health history</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-upload text-amber-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Uploaded Reports</h4>
+            <p class="text-xs text-slate-400">Lab results and scans</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-history text-pink-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Consultation History</h4>
+            <p class="text-xs text-slate-400">Past visit summaries</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-clapperboard text-red-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Webinar Registrations</h4>
+            <p class="text-xs text-slate-400">Upcoming health sessions</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-video text-emerald-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Upcoming Video Calls</h4>
+            <p class="text-xs text-slate-400">Telehealth appointments</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-list-check text-blue-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Treatment Plans</h4>
+            <p class="text-xs text-slate-400">Personalized care roadmap</p>
+          </div>
+        </div>
+
+        <!-- Upcoming appointment preview -->
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-blink"></span>
+            <span class="text-xs font-mono text-slate-400">NEXT APPOINTMENT</span>
+          </div>
+          <div class="mb-4">
+            <div class="text-2xl font-display font-bold">Tomorrow</div>
+            <div class="text-sm text-slate-400">10:30 AM – 11:00 AM</div>
+          </div>
+          <div class="flex items-center gap-3 p-3 glass rounded-xl mb-4">
+            <img src="https://picsum.photos/seed/doc1/100/100.jpg" class="w-12 h-12 rounded-full object-cover" alt="Doctor">
+            <div>
+              <div class="font-medium text-sm">Dr. Sarah Chen</div>
+              <div class="text-xs text-slate-400">Homeopathy Specialist</div>
+            </div>
+          </div>
+          <div class="space-y-2 text-sm mb-4">
+            <div class="flex justify-between"><span class="text-slate-400">Type:</span> <span>Video Call</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Platform:</span> <span>Jitsi Meet</span></div>
+            <div class="flex justify-between"><span class="text-slate-400">Status:</span> <span class="text-emerald-400">Confirmed</span></div>
+          </div>
+          <button class="btn-primary w-full justify-center text-sm">
+            <i class="fas fa-video"></i> Join Consultation
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Doctor Portal -->
+    <div id="doctorPortal" class="portal-content hidden reveal">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <i class="fas fa-users text-emerald-400 text-xl"></i>
+            <span class="text-xs text-emerald-400 font-mono">TODAY</span>
+          </div>
+          <div class="font-display font-bold text-2xl">24</div>
+          <div class="text-xs text-slate-400 mt-1">Patients Today</div>
+        </div>
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <i class="fas fa-clock text-blue-400 text-xl"></i>
+            <span class="text-xs text-blue-400 font-mono">NEXT</span>
+          </div>
+          <div class="font-display font-bold text-2xl">15m</div>
+          <div class="text-xs text-slate-400 mt-1">Until Next Visit</div>
+        </div>
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <i class="fas fa-chart-line text-purple-400 text-xl"></i>
+            <span class="text-xs text-purple-400 font-mono">+12%</span>
+          </div>
+          <div class="font-display font-bold text-2xl">94%</div>
+          <div class="text-xs text-slate-400 mt-1">Recovery Rate</div>
+        </div>
+        <div class="glass-card rounded-2xl p-5">
+          <div class="flex items-center justify-between mb-3">
+            <i class="fas fa-bell text-amber-400 text-xl"></i>
+            <span class="text-xs text-amber-400 font-mono">PENDING</span>
+          </div>
+          <div class="font-display font-bold text-2xl">7</div>
+          <div class="text-xs text-slate-400 mt-1">Follow-ups</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 grid grid-cols-2 gap-4">
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-calendar-check text-emerald-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Appointment Management</h4>
+            <p class="text-xs text-slate-400">Schedule, reschedule, cancel</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-folder-open text-blue-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Patient Records</h4>
+            <p class="text-xs text-slate-400">Complete medical history</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-pen-to-square text-purple-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Prescriptions</h4>
+            <p class="text-xs text-slate-400">Write and manage Rx</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-notes-medical text-amber-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Consultation Notes</h4>
+            <p class="text-xs text-slate-400">SOAP notes and summaries</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-calendar-plus text-pink-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Follow-ups</h4>
+            <p class="text-xs text-slate-400">Track patient progress</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-clapperboard text-red-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Webinar Management</h4>
+            <p class="text-xs text-slate-400">Host and schedule sessions</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-chart-pie text-emerald-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Analytics Dashboard</h4>
+            <p class="text-xs text-slate-400">Outcomes and insights</p>
+          </div>
+          <div class="glass-card rounded-2xl p-5 cursor-pointer hover:border-emerald-500/30">
+            <i class="fas fa-video text-blue-400 text-2xl mb-3"></i>
+            <h4 class="font-semibold mb-1">Telehealth</h4>
+            <p class="text-xs text-slate-400">Remote consultations</p>
+          </div>
+        </div>
+
+        <!-- Analytics preview -->
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-center gap-2 mb-4">
+            <i class="fas fa-chart-line text-emerald-400"></i>
+            <span class="text-sm font-medium">Weekly Analytics</span>
+          </div>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-400">Patient Recovery</span>
+                <span class="text-emerald-400">94%</span>
+              </div>
+              <div class="h-2 rounded-full bg-white/5 overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-emerald-500 to-emerald-400 rounded-full" style="width:94%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-400">Satisfaction</span>
+                <span class="text-blue-400">98%</span>
+              </div>
+              <div class="h-2 rounded-full bg-white/5 overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-blue-500 to-blue-400 rounded-full" style="width:98%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-400">Follow-up Rate</span>
+                <span class="text-purple-400">76%</span>
+              </div>
+              <div class="h-2 rounded-full bg-white/5 overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-purple-500 to-purple-400 rounded-full" style="width:76%"></div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-6 pt-6 border-t border-white/5">
+            <div class="text-xs text-slate-400 mb-2">This Week</div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <div class="font-display font-bold text-xl">142</div>
+                <div class="text-xs text-slate-500">Consultations</div>
+              </div>
+              <div>
+                <div class="font-display font-bold text-xl">38</div>
+                <div class="text-xs text-slate-500">New Patients</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== VIDEO CONSULTATION ==================== -->
+<section class="relative py-24 px-6">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-red-400 mb-4">
+        <i class="fas fa-circle text-[6px] animate-blink"></i>
+        TELEMEDICINE READY
+      </div>
+      <h2 class="font-display font-bold text-4xl md:text-5xl mb-4">
+        Video <span class="text-gradient">Consultation</span>
+      </h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        Integrated with OpenEMR Telehealth. Supporting Jitsi Meet, Google Meet, and Zoom.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 reveal">
+      <!-- Main video card -->
+      <div class="lg:col-span-2 glass-card rounded-3xl p-8 relative overflow-hidden">
+        <div class="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/30">
+          <span class="w-2 h-2 rounded-full bg-red-500 animate-blink"></span>
+          <span class="text-xs font-mono text-red-400">UPCOMING</span>
+        </div>
+
+        <div class="mb-6">
+          <div class="text-xs font-mono text-slate-400 mb-2">TOMORROW · 10:30 AM</div>
+          <h3 class="font-display font-bold text-2xl mb-2">Follow-up Consultation</h3>
+          <p class="text-slate-400 text-sm">Respiratory System Assessment Review</p>
+        </div>
+
+        <!-- Video placeholder -->
+        <div class="relative rounded-2xl overflow-hidden bg-slate-900/50 aspect-video mb-6 border border-white/5">
+          <div class="absolute inset-0 flex items-center justify-center">
+            <div class="text-center">
+              <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
+                <i class="fas fa-video text-3xl text-emerald-400"></i>
+              </div>
+              <p class="text-slate-400 text-sm">Video consultation starts in</p>
+              <div class="font-display font-bold text-3xl mt-2" id="countdown">22:14:35</div>
+            </div>
+          </div>
+          <div class="scan-line" style="top:50%;"></div>
+        </div>
+
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <img src="https://picsum.photos/seed/doc2/100/100.jpg" class="w-12 h-12 rounded-full object-cover" alt="">
+            <div>
+              <div class="font-medium text-sm">Dr. Michael Reeves</div>
+              <div class="text-xs text-slate-400">Senior Homeopath</div>
+            </div>
+          </div>
+          <button class="btn-primary">
+            <i class="fas fa-video"></i>
+            Join Consultation
+          </button>
+        </div>
+      </div>
+
+      <!-- Platform selector -->
+      <div class="space-y-4">
+        <div class="glass-card rounded-2xl p-6">
+          <h4 class="font-display font-semibold text-lg mb-4">Meeting Platform</h4>
+          <div class="space-y-3">
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 cursor-pointer">
+              <input type="radio" name="platform" value="jitsi" checked class="accent-emerald-500">
+              <div class="flex-1">
+                <div class="font-medium text-sm">Jitsi Meet</div>
+                <div class="text-xs text-slate-400">Recommended · Default</div>
+              </div>
+              <i class="fas fa-check-circle text-emerald-400"></i>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-white/8 cursor-pointer hover:border-white/15">
+              <input type="radio" name="platform" value="meet" class="accent-emerald-500">
+              <div class="flex-1">
+                <div class="font-medium text-sm">Google Meet</div>
+                <div class="text-xs text-slate-400">Video conferencing</div>
+              </div>
+            </label>
+            <label class="flex items-center gap-3 p-3 rounded-xl border border-white/8 cursor-pointer hover:border-white/15">
+              <input type="radio" name="platform" value="zoom" class="accent-emerald-500">
+              <div class="flex-1">
+                <div class="font-medium text-sm">Zoom</div>
+                <div class="text-xs text-slate-400">Cloud meetings</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6">
+          <h4 class="font-display font-semibold text-lg mb-4">Meeting Details</h4>
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between">
+              <span class="text-slate-400">Meeting ID</span>
+              <span class="font-mono">HRF-892-X4K</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Passcode</span>
+              <span class="font-mono">•••• 4892</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Duration</span>
+              <span>30 minutes</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="text-slate-400">Waiting Room</span>
+              <span class="text-emerald-400">Enabled</span>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-white/5">
+            <div class="text-xs text-slate-400 mb-2">Meeting Link</div>
+            <div class="flex items-center gap-2 p-2 glass rounded-lg">
+              <i class="fas fa-link text-slate-400 text-xs"></i>
+              <span class="text-xs font-mono text-slate-300 truncate flex-1">meet.jit.si/hrf-892-x4k</span>
+              <button class="text-emerald-400 text-xs"><i class="fas fa-copy"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== WEBINAR HUB ==================== -->
+<section id="webinars" class="relative py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-12 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-emerald-400 mb-4">
+        <i class="fas fa-circle text-[6px]"></i>
+        KNOWLEDGE CENTER
+      </div>
+      <h2 class="font-display font-bold text-4xl md:text-5xl mb-4">
+        Webinar <span class="text-gradient">Hub</span>
+      </h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        Live and on-demand health webinars from our specialist team.
+      </p>
+    </div>
+
+    <!-- Category filter -->
+    <div class="flex flex-wrap justify-center gap-2 mb-12 reveal" id="webinarCategories">
+      <button onclick="filterWebinars('all')" class="tab-btn active" data-cat="all">All</button>
+      <button onclick="filterWebinars('diabetes')" class="tab-btn" data-cat="diabetes">Diabetes Management</button>
+      <button onclick="filterWebinars('pcos')" class="tab-btn" data-cat="pcos">PCOS Awareness</button>
+      <button onclick="filterWebinars('asthma')" class="tab-btn" data-cat="asthma">Asthma Care</button>
+      <button onclick="filterWebinars('child')" class="tab-btn" data-cat="child">Child Health</button>
+      <button onclick="filterWebinars('thyroid')" class="tab-btn" data-cat="thyroid">Thyroid Wellness</button>
+      <button onclick="filterWebinars('arthritis')" class="tab-btn" data-cat="arthritis">Arthritis Management</button>
+    </div>
+
+    <div id="webinarGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DOCTOR PROFILES ==================== -->
+<section id="doctors" class="relative py-24 px-6">
+  <div class="max-w-7xl mx-auto">
+    <div class="text-center mb-16 reveal">
+      <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full glass text-xs font-mono text-blue-400 mb-4">
+        <i class="fas fa-circle text-[6px]"></i>
+        SPECIALIST TEAM
+      </div>
+      <h2 class="font-display font-bold text-4xl md:text-5xl mb-4">
+        Meet Our <span class="text-gradient">Doctors</span>
+      </h2>
+      <p class="text-slate-400 max-w-2xl mx-auto">
+        Experienced homeopathy specialists dedicated to your wellbeing.
+      </p>
+    </div>
+
+    <div id="doctorGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer id="contact" class="relative py-16 px-6 border-t border-white/5 mt-12">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+      <div class="md:col-span-1">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-blue-500 flex items-center justify-center">
+            <svg viewBox="0 0 24 24" class="w-6 h-6" fill="none">
+              <path d="M12 2L12 22M6 6L18 18M6 18L18 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="12" r="3" fill="white"/>
+            </svg>
+          </div>
+          <div>
+            <div class="font-display font-bold text-lg">HRF</div>
+            <div class="text-[10px] text-slate-400 tracking-wider">HOMEOPATHY RESEARCH FOUNDATION</div>
+          </div>
+        </div>
+        <p class="text-sm text-slate-400 mb-4">
+          A futuristic healthcare operating system combining precision homeopathy with interactive anatomy mapping.
+        </p>
+        <div class="flex gap-3">
+          <a href="#" class="w-9 h-9 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-emerald-400 transition"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="w-9 h-9 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-emerald-400 transition"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="w-9 h-9 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-emerald-400 transition"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="w-9 h-9 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-emerald-400 transition"><i class="fab fa-linkedin-in"></i></a>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-display font-semibold mb-4">Platform</h4>
+        <ul class="space-y-2 text-sm text-slate-400">
+          <li><a href="#systems" class="hover:text-emerald-400 transition">Anatomy Explorer</a></li>
+          <li><a href="#assessment" class="hover:text-emerald-400 transition">Assessment Tool</a></li>
+          <li><a href="#webinars" class="hover:text-emerald-400 transition">Webinar Hub</a></li>
+          <li><a href="#doctors" class="hover:text-emerald-400 transition">Find Doctors</a></li>
+          <li><a href="#" class="hover:text-emerald-400 transition">Telemedicine</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display font-semibold mb-4">Resources</h4>
+        <ul class="space-y-2 text-sm text-slate-400">
+          <li><a href="#" class="hover:text-emerald-400 transition">Research Papers</a></li>
+          <li><a href="#" class="hover:text-emerald-400 transition">Case Studies</a></li>
+          <li><a href="#" class="hover:text-emerald-400 transition">Patient Stories</a></li>
+          <li><a href="#" class="hover:text-emerald-400 transition">Health Library</a></li>
+          <li><a href="#" class="hover:text-emerald-400 transition">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="font-display font-semibold mb-4">Contact</h4>
+        <ul class="space-y-3 text-sm text-slate-400">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-map-marker-alt text-emerald-400 mt-1"></i>
+            <span>123 Wellness Avenue, Bangalore, Karnataka 560001</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <i class="fas fa-phone text-emerald-400"></i>
+            <span>+91 80 1234 5678</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <i class="fas fa-envelope text-emerald-400"></i>
+            <span>care@hrf.health</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <i class="fas fa-clock text-emerald-400"></i>
+            <span>Mon–Sat: 9AM – 7PM</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="text-xs text-slate-500">
+        © 2025 HRF – Homeopathy Research Foundation. All rights reserved.
+      </div>
+      <div class="flex items-center gap-4 text-xs text-slate-500">
+        <span class="flex items-center gap-1.5"><i class="fas fa-shield-check text-emerald-500"></i> HIPAA Compliant</span>
+        <span class="flex items-center gap-1.5"><i class="fas fa-lock text-emerald-500"></i> End-to-end Encrypted</span>
+        <span class="flex items-center gap-1.5"><i class="fas fa-server text-emerald-500"></i> OpenEMR Powered</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== LOGIN MODAL ==================== -->
+<div class="modal-overlay" id="loginModal" onclick="closeLoginModal(event)">
+  <div class="modal glass-strong rounded-3xl p-8 max-w-md w-full" onclick="event.stopPropagation()">
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h3 class="font-display font-bold text-2xl">Welcome to HRF</h3>
+        <p class="text-sm text-slate-400 mt-1">Choose your login portal</p>
+      </div>
+      <button onclick="closeLoginModal()" class="w-9 h-9 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-white transition">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="space-y-3">
+      <!-- Patient Login -->
+      <button onclick="loginAs('patient')" class="w-full p-5 rounded-2xl border border-white/8 hover:border-emerald-500/30 bg-white/2 hover:bg-emerald-500/5 transition group text-left">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-500/15 flex items-center justify-center group-hover:bg-emerald-500/25 transition">
+            <i class="fas fa-user text-2xl text-emerald-400"></i>
+          </div>
+          <div class="flex-1">
+            <div class="font-display font-semibold text-lg">Patient Login</div>
+            <div class="text-xs text-slate-400 mt-0.5">OpenEMR Patient Portal access</div>
+          </div>
+          <i class="fas fa-arrow-right text-slate-400 group-hover:text-emerald-400 group-hover:translate-x-1 transition"></i>
+        </div>
+      </button>
+
+      <!-- Doctor Login -->
+      <button onclick="loginAs('doctor')" class="w-full p-5 rounded-2xl border border-white/8 hover:border-blue-500/30 bg-white/2 hover:bg-blue-500/5 transition group text-left">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-blue-500/15 flex items-center justify-center group-hover:bg-blue-500/25 transition">
+            <i class="fas fa-user-md text-2xl text-blue-400"></i>
+          </div>
+          <div class="flex-1">
+            <div class="font-display font-semibold text-lg">Doctor Login</div>
+            <div class="text-xs text-slate-400 mt-0.5">OpenEMR Provider Portal access</div>
+          </div>
+          <i class="fas fa-arrow-right text-slate-400 group-hover:text-blue-400 group-hover:translate-x-1 transition"></i>
+        </div>
+      </button>
+    </div>
+
+    <div class="mt-6 pt-6 border-t border-white/5">
+      <div class="flex items-center justify-center gap-4 text-xs text-slate-500">
+        <span class="flex items-center gap-1"><i class="fas fa-shield-check text-emerald-500"></i> Secure</span>
+        <span class="flex items-center gap-1"><i class="fas fa-lock text-emerald-500"></i> Encrypted</span>
+        <span class="flex items-center gap-1"><i class="fas fa-fingerprint text-emerald-500"></i> 2FA Ready</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== CONSULTATION DRAWER ==================== -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeConsultationDrawer()"></div>
+<div class="drawer glass-strong" id="consultationDrawer">
+  <div class="p-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <div class="text-xs font-mono text-emerald-400 mb-1">SMART CONSULTATION</div>
+        <h3 class="font-display font-bold text-2xl">Book Appointment</h3>
+      </div>
+      <button onclick="closeConsultationDrawer()" class="w-9 h-9 rounded-lg glass flex items-center justify-center text-slate-400 hover:text-white transition">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Auto-populated summary -->
+    <div class="glass rounded-2xl p-4 mb-6">
+      <div class="text-xs font-mono text-slate-400 mb-3">ASSESSMENT SUMMARY</div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-slate-400">Body System:</span> <span id="drawerSystem" class="text-emerald-400 font-medium">—</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Disease:</span> <span id="drawerDisease" class="text-emerald-400 font-medium">—</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Symptoms:</span> <span id="drawerSymptoms" class="text-emerald-400 font-medium text-right">—</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Pain Areas:</span> <span id="drawerPain" class="text-emerald-400 font-medium text-right">—</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Intensity:</span> <span id="drawerIntensity" class="text-emerald-400 font-medium">—</span></div>
+        <div class="flex justify-between"><span class="text-slate-400">Duration:</span> <span id="drawerDuration" class="text-emerald-400 font-medium">—</span></div>
+      </div>
+    </div>
+
+    <!-- Patient info form -->
+    <form id="consultationForm" onsubmit="submitConsultation(event)" class="space-y-4">
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" placeholder="John Doe" required>
+        </div>
+        <div>
+          <label class="form-label">Age</label>
+          <input type="number" class="form-input" placeholder="32" required min="1" max="120">
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label">Gender</label>
+        <div class="flex gap-2">
+          <label class="flex-1 symptom-check" onclick="selectGender(this, 'Male')">
+            <div class="check-box"><i class="fas fa-check"></i></div>
+            <span class="text-sm">Male</span>
+          </label>
+          <label class="flex-1 symptom-check" onclick="selectGender(this, 'Female')">
+            <div class="check-box"><i class="fas fa-check"></i></div>
+            <span class="text-sm">Female</span>
+          </label>
+          <label class="flex-1 symptom-check" onclick="selectGender(this, 'Other')">
+            <div class="check-box"><i class="fas fa-check"></i></div>
+            <span class="text-sm">Other</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="form-label">Phone</label>
+          <input type="tel" class="form-input" placeholder="+91 98765 43210" required>
+        </div>
+        <div>
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" placeholder="john@example.com" required>
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label">City</label>
+        <input type="text" class="form-input" placeholder="Bangalore" required>
+      </div>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="form-label">Preferred Date</label>
+          <input type="date" class="form-input" required>
+        </div>
+        <div>
+          <label class="form-label">Preferred Time</label>
+          <select class="form-input" required>
+            <option value="">Select</option>
+            <option>09:00 AM – 10:00 AM</option>
+            <option>10:00 AM – 11:00 AM</option>
+            <option>11:00 AM – 12:00 PM</option>
+            <option>02:00 PM – 03:00 PM</option>
+            <option>03:00 PM – 04:00 PM</option>
+            <option>04:00 PM – 05:00 PM</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="form-label">Consultation Type</label>
+        <div class="grid grid-cols-3 gap-2">
+          <label class="symptom-check justify-center" onclick="selectConsultType(this, 'Video')">
+            <i class="fas fa-video text-emerald-400"></i>
+            <span class="text-xs">Video</span>
+          </label>
+          <label class="symptom-check justify-center" onclick="selectConsultType(this, 'In-Person')">
+            <i class="fas fa-hospital text-blue-400"></i>
+            <span class="text-xs">In-Person</span>
+          </label>
+          <label class="symptom-check justify-center" onclick="selectConsultType(this, 'Phone')">
+            <i class="fas fa-phone text-amber-400"></i>
+            <span class="text-xs">Phone</span>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-primary w-full justify-center">
+        <i class="fas fa-calendar-check"></i>
+        Book Appointment
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- ==================== TOAST ==================== -->
+<div class="toast" id="toast">
+  <i class="fas fa-check-circle text-emerald-400 text-xl"></i>
+  <div>
+    <div class="font-medium text-sm" id="toastTitle">Success</div>
+    <div class="text-xs text-slate-400" id="toastMsg">Action completed</div>
+  </div>
+</div>
+
+<!-- ==================== THREE.JS: 3D HUMAN BODY ==================== -->
+<script type="module">
+import * as THREE from 'three';
+
+// ============ MAIN HERO BODY ============
+const canvas = document.getElementById('body3d');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(40, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
+camera.position.set(0, 0.5, 7);
+
+const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
+
+// Lighting
+const ambient = new THREE.AmbientLight(0xffffff, 0.3);
+scene.add(ambient);
+
+const keyLight = new THREE.DirectionalLight(0x10b981, 0.8);
+keyLight.position.set(5, 5, 5);
+scene.add(keyLight);
+
+const fillLight = new THREE.DirectionalLight(0x0ea5e9, 0.5);
+fillLight.position.set(-5, 3, 3);
+scene.add(fillLight);
+
+const rimLight = new THREE.DirectionalLight(0xa855f7, 0.3);
+rimLight.position.set(0, 5, -5);
+scene.add(rimLight);
+
+// Body group
+const bodyGroup = new THREE.Group();
+scene.add(bodyGroup);
+
+// Materials
+const skinMat = new THREE.MeshPhysicalMaterial({
+  color: 0x1a2a4a,
+  transparent: true,
+  opacity: 0.15,
+  roughness: 0.2,
+  metalness: 0.0,
+  transmission: 0.9,
+  thickness: 0.5,
+  clearcoat: 0.8,
+  ior: 1.3,
+  side: THREE.DoubleSide
+});
+
+const skeletonMat = new THREE.MeshBasicMaterial({
+  color: 0xffffff,
+  transparent: true,
+  opacity: 0.15,
+  wireframe: false
+});
+
+// Create body parts
+function createBody() {
+  // Head
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.42, 32, 32), skinMat);
+  head.position.y = 2.6;
+  head.scale.y = 1.15;
+  bodyGroup.add(head);
+
+  // Neck
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.16, 0.22, 16), skinMat);
+  neck.position.y = 2.2;
+  bodyGroup.add(neck);
+
+  // Torso
+  const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.5, 1.1, 8, 16), skinMat);
+  torso.position.y = 1.3;
+  bodyGroup.add(torso);
+
+  // Lower torso (pelvis area)
+  const pelvis = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.3, 8, 16), skinMat);
+  pelvis.position.y = 0.35;
+  bodyGroup.add(pelvis);
+
+  // Arms
+  const armGeo = new THREE.CapsuleGeometry(0.11, 1.2, 8, 16);
+  
+  const leftUpperArm = new THREE.Mesh(armGeo, skinMat);
+  leftUpperArm.position.set(-0.62, 1.5, 0);
+  leftUpperArm.rotation.z = 0.12;
+  bodyGroup.add(leftUpperArm);
+
+  const rightUpperArm = new THREE.Mesh(armGeo, skinMat);
+  rightUpperArm.position.set(0.62, 1.5, 0);
+  rightUpperArm.rotation.z = -0.12;
+  bodyGroup.add(rightUpperArm);
+
+  // Forearms
+  const forearmGeo = new THREE.CapsuleGeometry(0.09, 1.0, 8, 16);
+  const leftForearm = new THREE.Mesh(forearmGeo, skinMat);
+  leftForearm.position.set(-0.72, 0.5, 0);
+  bodyGroup.add(leftForearm);
+  const rightForearm = new THREE.Mesh(forearmGeo, skinMat);
+  rightForearm.position.set(0.72, 0.5, 0);
+  bodyGroup.add(rightForearm);
+
+  // Hands
+  const handGeo = new THREE.SphereGeometry(0.1, 16, 16);
+  handGeo.scale(0.8, 1.2, 0.5);
+  const leftHand = new THREE.Mesh(handGeo, skinMat);
+  leftHand.position.set(-0.75, -0.1, 0);
+  bodyGroup.add(leftHand);
+  const rightHand = new THREE.Mesh(handGeo, skinMat);
+  rightHand.position.set(0.75, -0.1, 0);
+  bodyGroup.add(rightHand);
+
+  // Legs
+  const legGeo = new THREE.CapsuleGeometry(0.16, 1.3, 8, 16);
+  const leftLeg = new THREE.Mesh(legGeo, skinMat);
+  leftLeg.position.set(-0.22, -0.6, 0);
+  bodyGroup.add(leftLeg);
+  const rightLeg = new THREE.Mesh(legGeo, skinMat);
+  rightLeg.position.set(0.22, -0.6, 0);
+  bodyGroup.add(rightLeg);
+
+  // Lower legs
+  const shinGeo = new THREE.CapsuleGeometry(0.13, 1.1, 8, 16);
+  const leftShin = new THREE.Mesh(shinGeo, skinMat);
+  leftShin.position.set(-0.24, -1.9, 0);
+  bodyGroup.add(leftShin);
+  const rightShin = new THREE.Mesh(shinGeo, skinMat);
+  rightShin.position.set(0.24, -1.9, 0);
+  bodyGroup.add(rightShin);
+
+  // Feet
+  const footGeo = new THREE.SphereGeometry(0.14, 16, 16);
+  footGeo.scale(1, 0.5, 1.8);
+  const leftFoot = new THREE.Mesh(footGeo, skinMat);
+  leftFoot.position.set(-0.24, -2.6, 0.15);
+  bodyGroup.add(leftFoot);
+  const rightFoot = new THREE.Mesh(footGeo, skinMat);
+  rightFoot.position.set(0.24, -2.6, 0.15);
+  bodyGroup.add(rightFoot);
+}
+
+// Organs
+const organs = {};
+
+function createOrgan(radius, color, position, shape = 'sphere') {
+  let geo;
+  if (shape === 'sphere') geo = new THREE.SphereGeometry(radius, 20, 20);
+  else if (shape === 'capsule') geo = new THREE.CapsuleGeometry(radius, radius * 1.5, 8, 16);
+  else if (shape === 'cone') geo = new THREE.ConeGeometry(radius, radius * 2, 16);
+  
+  const mat = new THREE.MeshStandardMaterial({
+    color: color,
+    emissive: color,
+    emissiveIntensity: 0.5,
+    roughness: 0.3,
+    metalness: 0.2
+  });
+  
+  const organ = new THREE.Mesh(geo, mat);
+  organ.position.copy(position);
+  organ.userData = { baseColor: color, baseIntensity: 0.5, system: null };
+  return organ;
+}
+
+function createOrgans() {
+  // Brain
+  organs.brain = createOrgan(0.22, 0xa855f7, new THREE.Vector3(0, 2.65, 0.05));
+  organs.brain.userData.system = 'nervous';
+  organs.brain.scale.set(1, 0.85, 1);
+  bodyGroup.add(organs.brain);
+
+  // Heart
+  organs.heart = createOrgan(0.14, 0xef4444, new THREE.Vector3(-0.1, 1.6, 0.2));
+  organs.heart.userData.system = 'cardiovascular';
+  organs.heart.scale.set(0.9, 1.1, 0.9);
+  bodyGroup.add(organs.heart);
+
+  // Lungs
+  organs.leftLung = createOrgan(0.13, 0x38bdf8, new THREE.Vector3(-0.22, 1.7, 0.1), 'capsule');
+  organs.leftLung.userData.system = 'respiratory';
+  organs.leftLung.scale.set(0.8, 1, 0.6);
+  bodyGroup.add(organs.leftLung);
+
+  organs.rightLung = createOrgan(0.13, 0x38bdf8, new THREE.Vector3(0.22, 1.7, 0.1), 'capsule');
+  organs.rightLung.userData.system = 'respiratory';
+  organs.rightLung.scale.set(0.8, 1, 0.6);
+  bodyGroup.add(organs.rightLung);
+
+  // Liver
+  organs.liver = createOrgan(0.16, 0xf59e0b, new THREE.Vector3(0.12, 1.15, 0.15));
+  organs.liver.userData.system = 'digestive';
+  organs.liver.scale.set(1.3, 0.7, 0.8);
+  bodyGroup.add(organs.liver);
+
+  // Stomach
+  organs.stomach = createOrgan(0.1, 0x10b981, new THREE.Vector3(-0.1, 1.05, 0.15));
+  organs.stomach.userData.system = 'digestive';
+  organs.stomach.scale.set(1.2, 0.9, 0.8);
+  bodyGroup.add(organs.stomach);
+
+  // Kidneys
+  organs.leftKidney = createOrgan(0.09, 0x8b5cf6, new THREE.Vector3(-0.18, 0.85, -0.12));
+  organs.leftKidney.userData.system = 'urinary';
+  organs.leftKidney.scale.set(0.7, 1.1, 0.8);
+  bodyGroup.add(organs.leftKidney);
+
+  organs.rightKidney = createOrgan(0.09, 0x8b5cf6, new THREE.Vector3(0.18, 0.85, -0.12));
+  organs.rightKidney.userData.system = 'urinary';
+  organs.rightKidney.scale.set(0.7, 1.1, 0.8);
+  bodyGroup.add(organs.rightKidney);
+
+  // Thyroid
+  organs.thyroid = createOrgan(0.05, 0xec4899, new THREE.Vector3(0, 2.15, 0.12));
+  organs.thyroid.userData.system = 'endocrine';
+  organs.thyroid.scale.set(1.5, 0.7, 0.8);
+  bodyGroup.add(organs.thyroid);
+
+  // Pancreas
+  organs.pancreas = createOrgan(0.06, 0xec4899, new THREE.Vector3(0.05, 0.95, 0.1));
+  organs.pancreas.userData.system = 'endocrine';
+  organs.pancreas.scale.set(2, 0.6, 0.6);
+  bodyGroup.add(organs.pancreas);
+
+  // Reproductive
+  organs.reproductive = createOrgan(0.1, 0xf472b6, new THREE.Vector3(0, 0.3, 0.12));
+  organs.reproductive.userData.system = 'reproductive';
+  organs.reproductive.scale.set(1.2, 0.8, 0.8);
+  bodyGroup.add(organs.reproductive);
+
+  // Joints (for musculoskeletal)
+  const jointPositions = [
+    [-0.62, 1.95, 0], [0.62, 1.95, 0], // shoulders
+    [-0.72, 0.95, 0], [0.72, 0.95, 0], // elbows
+    [-0.22, -0.1, 0], [0.22, -0.1, 0], // hips
+    [-0.24, -1.2, 0], [0.24, -1.2, 0], // knees
+    [-0.24, -2.4, 0], [0.24, -2.4, 0], // ankles
+  ];
+  organs.joints = [];
+  jointPositions.forEach(pos => {
+    const joint = createOrgan(0.07, 0xfb923c, new THREE.Vector3(...pos));
+    joint.userData.system = 'musculoskeletal';
+    bodyGroup.add(joint);
+    organs.joints.push(joint);
+  });
+}
+
+// Skeleton (spine + ribs)
+function createSkeleton() {
+  // Spine
+  const spineGeo = new THREE.CylinderGeometry(0.035, 0.04, 2.2, 8);
+  const spine = new THREE.Mesh(spineGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.2 }));
+  spine.position.y = 1.3;
+  spine.position.z = -0.08;
+  bodyGroup.add(spine);
+
+  // Ribcage
+  for (let i = 0; i < 7; i++) {
+    const rib = new THREE.Mesh(
+      new THREE.TorusGeometry(0.38 - i * 0.015, 0.012, 6, 24, Math.PI * 0.85),
+      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 })
+    );
+    rib.position.y = 1.9 - i * 0.13;
+    rib.position.z = 0;
+    rib.rotation.x = Math.PI / 2;
+    rib.rotation.z = Math.PI / 2;
+    bodyGroup.add(rib);
+  }
+
+  // Pelvis ring
+  const pelvisBone = new THREE.Mesh(
+    new THREE.TorusGeometry(0.32, 0.025, 8, 32),
+    new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.15 })
+  );
+  pelvisBone.position.y = 0.3;
+  pelvisBone.rotation.x = Math.PI / 2;
+  bodyGroup.add(pelvisBone);
+}
+
+// Particles
+function createParticles() {
+  const count = 600;
+  const positions = new Float32Array(count * 3);
+  const colors = new Float32Array(count * 3);
+  const sizes = new Float32Array(count);
+
+  for (let i = 0; i < count; i++) {
+    const i3 = i * 3;
+    const radius = 3 + Math.random() * 5;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+
+    positions[i3] = radius * Math.sin(phi) * Math.cos(theta);
+    positions[i3 + 1] = (Math.random() - 0.5) * 8;
+    positions[i3 + 2] = radius * Math.sin(phi) * Math.sin(theta);
+
+    const isEmerald = Math.random() > 0.4;
+    if (isEmerald) {
+      colors[i3] = 0.06; colors[i3 + 1] = 0.72; colors[i3 + 2] = 0.51;
+    } else {
+      colors[i3] = 0.05; colors[i3 + 1] = 0.64; colors[i3 + 2] = 0.91;
+    }
+    sizes[i] = Math.random() * 0.04 + 0.01;
+  }
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const mat = new THREE.PointsMaterial({
+    size: 0.035,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+
+  const particles = new THREE.Points(geo, mat);
+  scene.add(particles);
+  return particles;
+}
+
+// Platform ring
+function createPlatform() {
+  const ringGeo = new THREE.RingGeometry(1.5, 1.55, 64);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.4, side: THREE.DoubleSide });
+  const ring = new THREE.Mesh(ringGeo, ringMat);
+  ring.position.y = -2.8;
+  ring.rotation.x = -Math.PI / 2;
+  scene.add(ring);
+
+  const ring2Geo = new THREE.RingGeometry(1.8, 1.82, 64);
+  const ring2Mat = new THREE.MeshBasicMaterial({ color: 0x0ea5e9, transparent: true, opacity: 0.2, side: THREE.DoubleSide });
+  const ring2 = new THREE.Mesh(ring2Geo, ring2Mat);
+  ring2.position.y = -2.8;
+  ring2.rotation.x = -Math.PI / 2;
+  scene.add(ring2);
+}
+
+// Build scene
+createBody();
+createOrgans();
+createSkeleton();
+createPlatform();
+const particles = createParticles();
+
+// Mouse interaction
+let isDragging = false;
+let prevMouseX = 0, prevMouseY = 0;
+let targetRotY = 0, targetRotX = 0;
+let currentRotY = 0, currentRotX = 0;
+let autoRotate = true;
+
+canvas.addEventListener('pointerdown', (e) => {
+  isDragging = true;
+  autoRotate = false;
+  prevMouseX = e.clientX;
+  prevMouseY = e.clientY;
+});
+
+window.addEventListener('pointermove', (e) => {
+  if (!isDragging) return;
+  const dx = e.clientX - prevMouseX;
+  const dy = e.clientY - prevMouseY;
+  targetRotY += dx * 0.008;
+  targetRotX += dy * 0.005;
+  targetRotX = Math.max(-0.6, Math.min(0.6, targetRotX));
+  prevMouseX = e.clientX;
+  prevMouseY = e.clientY;
+});
+
+window.addEventListener('pointerup', () => {
+  isDragging = false;
+  setTimeout(() => { autoRotate = true; }, 2000);
+});
+
+// Highlight system
+window.highlightSystem = function(systemId) {
+  Object.values(organs).flat().forEach(organ => {
+    if (Array.isArray(organ)) {
+      organ.forEach(o => {
+        if (o.userData.system === systemId) {
+          o.material.emissiveIntensity = 1.5;
+          o.scale.multiplyScalar(1.15);
+          setTimeout(() => {
+            o.material.emissiveIntensity = o.userData.baseIntensity;
+            o.scale.divideScalar(1.15);
+          }, 2000);
+        }
+      });
+    } else {
+      if (organ.userData.system === systemId) {
+        organ.material.emissiveIntensity = 1.5;
+        const origScale = organ.scale.clone();
+        organ.scale.multiplyScalar(1.2);
+        setTimeout(() => {
+          organ.material.emissiveIntensity = organ.userData.baseIntensity;
+          organ.scale.copy(origScale);
+        }, 2000);
+      }
+    }
+  });
+};
+
+// Animation loop
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const t = clock.getElapsedTime();
+
+  if (autoRotate) {
+    targetRotY += 0.003;
+  }
+
+  currentRotY += (targetRotY - currentRotY) * 0.08;
+  currentRotX += (targetRotX - currentRotX) * 0.08;
+  bodyGroup.rotation.y = currentRotY;
+  bodyGroup.rotation.x = currentRotX;
+
+  // Floating animation
+  bodyGroup.position.y = Math.sin(t * 0.8) * 0.08;
+
+  // Organ pulse
+  Object.values(organs).flat().forEach(organ => {
+    if (Array.isArray(organ)) {
+      organ.forEach(o => {
+        const pulse = Math.sin(t * 2 + o.position.x) * 0.15 + 0.85;
+        o.material.emissiveIntensity = o.userData.baseIntensity * pulse;
+      });
+    } else {
+      const pulse = Math.sin(t * 2 + organ.position.x) * 0.15 + 0.85;
+      organ.material.emissiveIntensity = organ.userData.baseIntensity * pulse;
+    }
+  });
+
+  // Particles
+  if (particles) {
+    particles.rotation.y = t * 0.05;
+    particles.rotation.x = Math.sin(t * 0.1) * 0.1;
+  }
+
+  // Update rotation display
+  const rotDisplay = document.getElementById('rotationValue');
+  if (rotDisplay) {
+    rotDisplay.textContent = (currentRotY * 180 / Math.PI).toFixed(2) + '°';
+  }
+
+  renderer.render(scene, camera);
+}
+
+// Resize
+function resize() {
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  renderer.setSize(w, h, false);
+}
+window.addEventListener('resize', resize);
+resize();
+animate();
+
+// ============ SMALL BODY (Anatomy section) ============
+const canvasSmall = document.getElementById('body3dSmall');
+if (canvasSmall) {
+  const sceneSmall = new THREE.Scene();
+  const cameraSmall = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+  cameraSmall.position.set(0, 0.5, 7);
+  
+  const rendererSmall = new THREE.WebGLRenderer({ canvas: canvasSmall, alpha: true, antialias: true });
+  rendererSmall.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  
+  function resizeSmall() {
+    const w = canvasSmall.clientWidth;
+    const h = canvasSmall.clientHeight || 450;
+    cameraSmall.aspect = w / h;
+    cameraSmall.updateProjectionMatrix();
+    rendererSmall.setSize(w, h, false);
+  }
+  
+  sceneSmall.add(new THREE.AmbientLight(0xffffff, 0.4));
+  const dl1 = new THREE.DirectionalLight(0x10b981, 0.6);
+  dl1.position.set(5, 5, 5);
+  sceneSmall.add(dl1);
+  const dl2 = new THREE.DirectionalLight(0x0ea5e9, 0.4);
+  dl2.position.set(-5, 3, 3);
+  sceneSmall.add(dl2);
+  
+  const bodyClone = bodyGroup.clone();
+  sceneSmall.add(bodyClone);
+  
+  let sDragging = false;
+  let sPrevX = 0, sPrevY = 0;
+  let sRotY = 0, sRotX = 0;
+  
+  canvasSmall.addEventListener('pointerdown', (e) => {
+    sDragging = true;
+    sPrevX = e.clientX;
+    sPrevY = e.clientY;
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!sDragging) return;
+    sRotY += (e.clientX - sPrevX) * 0.008;
+    sRotX += (e.clientY - sPrevY) * 0.005;
+    sRotX = Math.max(-0.6, Math.min(0.6, sRotX));
+    sPrevX = e.clientX;
+    sPrevY = e.clientY;
+  });
+  window.addEventListener('pointerup', () => { sDragging = false; });
+  
+  function animateSmall() {
+    requestAnimationFrame(animateSmall);
+    const t = clock.getElapsedTime();
+    if (!sDragging) sRotY += 0.004;
+    bodyClone.rotation.y = sRotY;
+    bodyClone.rotation.x = sRotX;
+    bodyClone.position.y = Math.sin(t * 0.8) * 0.08;
+    rendererSmall.render(sceneSmall, cameraSmall);
+  }
+  
+  resizeSmall();
+  window.addEventListener('resize', resizeSmall);
+  animateSmall();
+}
+
+// Expose for system selection
+window.bodyGroup = bodyGroup;
+window.organs = organs;
+</script>
+
+<!-- ==================== MAIN INTERACTION SCRIPT ==================== -->
+<script>
+// ============ DATA ============
+const bodySystemsData = [
+  {
+    id: 'nervous',
+    name: 'Brain & Nervous System',
+    shortName: 'Nervous System',
+    icon: 'fa-brain',
+    color: '#a855f7',
+    bgColor: 'rgba(168,85,247,0.15)',
+    organ: 'Brain',
+    description: 'The control center of the body',
+    diseases: ['Autism', 'ADHD'],
+    symptoms: ['Hyperactivity', 'Attention Issues', 'Learning Difficulties', 'Behavioural Concerns', 'Social Communication Difficulties'],
+    painAreas: ['Head', 'Brain', 'Nervous System']
+  },
+  {
+    id: 'respiratory',
+    name: 'Respiratory System',
+    shortName: 'Respiratory',
+    icon: 'fa-lungs',
+    color: '#38bdf8',
+    bgColor: 'rgba(56,189,248,0.15)',
+    organ: 'Lungs',
+    description: 'Breathing and oxygen exchange',
+    diseases: ['Asthma', 'URTI', 'Lung Health'],
+    symptoms: ['Wheezing', 'Breathlessness', 'Chronic Cough', 'Chest Tightness', 'Nasal Congestion', 'Sore Throat'],
+    painAreas: ['Chest', 'Throat', 'Upper Back']
+  },
+  {
+    id: 'cardiovascular',
+    name: 'Cardiovascular System',
+    shortName: 'Cardiovascular',
+    icon: 'fa-heart-pulse',
+    color: '#ef4444',
+    bgColor: 'rgba(239,68,68,0.15)',
+    organ: 'Heart & Blood Vessels',
+    description: 'Heart, blood vessels, circulation',
+    diseases: ['Cardiac Health', 'Varicose Veins', 'Gangrene'],
+    symptoms: ['Leg Swelling', 'Leg Pain', 'Discoloration', 'Chest Discomfort', 'Fatigue'],
+    painAreas: ['Heart Region', 'Legs', 'Feet']
+  },
+  {
+    id: 'endocrine',
+    name: 'Endocrine System',
+    shortName: 'Endocrine',
+    icon: 'fa-flask',
+    color: '#ec4899',
+    bgColor: 'rgba(236,72,153,0.15)',
+    organ: 'Thyroid & Pancreas',
+    description: 'Hormones and metabolism',
+    diseases: ['Chronic Diabetes', 'Thyroid Disorders'],
+    symptoms: ['Excessive Thirst', 'Frequent Urination', 'Fatigue', 'Weight Changes', 'Slow Healing'],
+    painAreas: ['Neck', 'Whole Body']
+  },
+  {
+    id: 'urinary',
+    name: 'Urinary System',
+    shortName: 'Urinary',
+    icon: 'fa-droplet',
+    color: '#8b5cf6',
+    bgColor: 'rgba(139,92,246,0.15)',
+    organ: 'Kidneys',
+    description: 'Kidneys, bladder, filtration',
+    diseases: ['Kidney Stones'],
+    symptoms: ['Lower Back Pain', 'Side Pain', 'Burning Urination', 'Nausea', 'Vomiting', 'Blood In Urine', 'Frequent Urination'],
+    painAreas: ['Kidneys', 'Lower Back', 'Groin']
+  },
+  {
+    id: 'digestive',
+    name: 'Digestive System',
+    shortName: 'Digestive',
+    icon: 'fa-bolt',
+    color: '#10b981',
+    bgColor: 'rgba(16,185,129,0.15)',
+    organ: 'Gall Bladder & Rectal Region',
+    description: 'Digestion and nutrient absorption',
+    diseases: ['Gall Bladder Stones', 'Haemorrhoids'],
+    symptoms: ['Abdominal Pain', 'Bloating', 'Constipation', 'Rectal Pain', 'Rectal Bleeding'],
+    painAreas: ['Upper Abdomen', 'Lower Abdomen', 'Rectal Area']
+  },
+  {
+    id: 'musculoskeletal',
+    name: 'Musculoskeletal System',
+    shortName: 'Musculoskeletal',
+    icon: 'fa-bone',
+    color: '#fb923c',
+    bgColor: 'rgba(251,146,60,0.15)',
+    organ: 'Joints',
+    description: 'Bones, joints, muscles',
+    diseases: ['Rheumatoid Arthritis'],
+    symptoms: ['Joint Pain', 'Swelling', 'Morning Stiffness', 'Reduced Mobility'],
+    painAreas: ['Fingers', 'Wrists', 'Knees', 'Ankles', 'Shoulders']
+  },
+  {
+    id: 'reproductive',
+    name: 'Reproductive System',
+    shortName: 'Reproductive',
+    icon: 'fa-venus',
+    color: '#f472b6',
+    bgColor: 'rgba(244,114,182,0.15)',
+    organ: 'Female Reproductive Organs',
+    description: 'Reproductive health and fertility',
+    diseases: ['PCOS', 'PCOD', 'Infertility'],
+    symptoms: ['Irregular Periods', 'Weight Gain', 'Acne', 'Hair Fall', 'Fertility Concerns'],
+    painAreas: ['Pelvis', 'Lower Abdomen']
+  }
+];
+
+// Pain area to SVG region mapping
+const painAreaToRegion = {
+  'Head': ['head'],
+  'Brain': ['head'],
+  'Nervous System': ['head', 'spine'],
+  'Chest': ['chest'],
+  'Throat': ['neck'],
+  'Upper Back': ['upper-back'],
+  'Heart Region': ['chest'],
+  'Legs': ['left-leg', 'right-leg'],
+  'Feet': ['left-foot', 'right-foot'],
+  'Neck': ['neck'],
+  'Whole Body': ['head', 'chest', 'abdomen', 'pelvis', 'left-arm', 'right-arm', 'left-leg', 'right-leg'],
+  'Kidneys': ['lower-back'],
+  'Lower Back': ['lower-back'],
+  'Groin': ['pelvis'],
+  'Upper Abdomen': ['abdomen'],
+  'Lower Abdomen': ['pelvis'],
+  'Rectal Area': ['pelvis'],
+  'Fingers': ['left-hand', 'right-hand'],
+  'Wrists': ['left-hand', 'right-hand'],
+  'Knees': ['left-leg', 'right-leg'],
+  'Ankles': ['left-leg', 'right-leg'],
+  'Shoulders': ['left-shoulder', 'right-shoulder'],
+  'Pelvis': ['pelvis'],
+};
+
+// Webinars data
+const webinarsData = [
+  { title: 'Reversing Diabetes Naturally', speaker: 'Dr. Sarah Chen', date: 'Dec 15, 2025', duration: '60 min', category: 'diabetes', catLabel: 'Diabetes Management', image: 'diabetes', color: '#ec4899' },
+  { title: 'Understanding PCOS: A Complete Guide', speaker: 'Dr. Priya Sharma', date: 'Dec 18, 2025', duration: '45 min', category: 'pcos', catLabel: 'PCOS Awareness', image: 'pcos', color: '#f472b6' },
+  { title: 'Asthma Care Through Homeopathy', speaker: 'Dr. Michael Reeves', date: 'Dec 20, 2025', duration: '50 min', category: 'asthma', catLabel: 'Asthma Care', image: 'asthma', color: '#38bdf8' },
+  { title: 'Child Behavioral Health', speaker: 'Dr. Anil Kumar', date: 'Dec 22, 2025', duration: '55 min', category: 'child', catLabel: 'Child Health', image: 'child', color: '#a855f7' },
+  { title: 'Thyroid Wellness Program', speaker: 'Dr. Emily Carter', date: 'Dec 25, 2025', duration: '60 min', category: 'thyroid', catLabel: 'Thyroid Wellness', image: 'thyroid', color: '#10b981' },
+  { title: 'Arthritis: Joint Pain Management', speaker: 'Dr. Rajesh Nair', date: 'Dec 28, 2025', duration: '50 min', category: 'arthritis', catLabel: 'Arthritis Management', image: 'arthritis', color: '#fb923c' },
+];
+
+// Doctors data
+const doctorsData = [
+  { name: 'Dr. Sarah Chen', designation: 'Chief Homeopath', qualifications: 'MD (Homeopathy), BHMS', experience: 18, specializations: ['Endocrine Disorders', 'Diabetes', 'Thyroid'], achievements: ['5000+ patients treated', 'Published 30+ papers', 'International speaker'], image: 'doc3' },
+  { name: 'Dr. Michael Reeves', designation: 'Senior Consultant', qualifications: 'MD (Resp. Medicine), BHMS', experience: 15, specializations: ['Respiratory', 'Asthma', 'Allergies'], achievements: ['Pioneer in homeopathic asthma care', '12+ research publications'], image: 'doc4' },
+  { name: 'Dr. Priya Sharma', designation: 'Fertility Specialist', qualifications: 'MD (Gynecology), BHMS', experience: 12, specializations: ['PCOS', 'PCOD', 'Infertility'], achievements: ['2000+ successful cases', 'Award-winning researcher'], image: 'doc5' },
+  { name: 'Dr. Anil Kumar', designation: 'Pediatric Specialist', qualifications: 'MD (Pediatrics), BHMS', experience: 16, specializations: ['Child Health', 'ADHD', 'Autism'], achievements: ['Child wellness program founder', 'International recognition'], image: 'doc6' },
+  { name: 'Dr. Emily Carter', designation: 'Cardiac Specialist', qualifications: 'MD (Cardiology), BHMS', experience: 20, specializations: ['Cardiac Health', 'Varicose Veins', 'Circulation'], achievements: ['25+ years experience', 'Keynote speaker'], image: 'doc7' },
+  { name: 'Dr. Rajesh Nair', designation: 'Rheumatology Expert', qualifications: 'MD (Rheumatology), BHMS', experience: 14, specializations: ['Arthritis', 'Joint Disorders', 'Musculoskeletal'], achievements: ['Innovative treatment protocols', 'Research excellence award'], image: 'doc8' },
+];
+
+// ============ STATE ============
+let assessmentState = {
+  system: null,
+  disease: null,
+  symptoms: [],
+  painAreas: [],
+  intensity: 5,
+  duration: null,
+  currentStep: 1
+};
+
+let selectedSystem = bodySystemsData[0];
+let currentBodyView = 'front';
+let selectedDuration = null;
+let selectedGender = null;
+let selectedConsultType = null;
+
+// ============ INIT ============
+document.addEventListener('DOMContentLoaded', () => {
+  initSystems();
+  initAnatomyList();
+  initStep1();
+  initWebinars();
+  initDoctors();
+  initBodySVG();
+  initScrollReveal();
+  updateSystemDetail(0);
+  startCountdown();
+  updateLiveTime();
+  setInterval(updateLiveTime, 1000);
+});
+
+// ============ SCROLL REVEAL ============
+function initScrollReveal() {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
+
+// ============ LIVE TIME ============
+function updateLiveTime() {
+  const el = document.getElementById('liveTime');
+  if (el) {
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+  }
+}
+
+// ============ COUNTDOWN ============
+function startCountdown() {
+  const el = document.getElementById('countdown');
+  if (!el) return;
+  let total = 22 * 3600 + 14 * 60 + 35;
+  setInterval(() => {
+    total--;
+    if (total < 0) total = 0;
+    const h = String(Math.floor(total / 3600)).padStart(2, '0');
+    const m = String(Math.floor((total % 3600) / 60)).padStart(2, '0');
+    const s = String(total % 60).padStart(2, '0');
+    el.textContent = `${h}:${m}:${s}`;
+  }, 1000);
+}
+
+// ============ SYSTEMS GRID ============
+function initSystems() {
+  const grid = document.getElementById('systemsGrid');
+  grid.innerHTML = bodySystemsData.map((sys, i) => `
+    <div class="system-card glass-card rounded-2xl p-5 ${i === 0 ? 'active' : ''}" 
+         style="--system-color: ${sys.bgColor};"
+         onclick="selectSystem(${i})" data-system="${sys.id}">
+      <div class="relative z-10">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-4" style="background:${sys.bgColor};">
+          <i class="fas ${sys.icon} text-xl" style="color:${sys.color};"></i>
+        </div>
+        <h3 class="font-display font-semibold text-base mb-1">${sys.shortName}</h3>
+        <p class="text-xs text-slate-400 mb-3">${sys.description}</p>
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-slate-500">${sys.diseases.length} conditions</span>
+          <span style="color:${sys.color};" class="font-medium">Explore →</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectSystem(index) {
+  selectedSystem = bodySystemsData[index];
+  
+  // Update grid
+  document.querySelectorAll('.system-card').forEach((card, i) => {
+    card.classList.toggle('active', i === index);
+  });
+  
+  // Update detail
+  updateSystemDetail(index);
+  
+  // Highlight 3D body
+  if (window.highlightSystem) {
+    window.highlightSystem(selectedSystem.id);
+  }
+  
+  // Scroll to detail
+  document.getElementById('systemDetail').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function updateSystemDetail(index) {
+  const sys = bodySystemsData[index];
+  const iconEl = document.getElementById('systemDetailIcon');
+  iconEl.style.background = sys.bgColor;
+  iconEl.style.color = sys.color;
+  iconEl.innerHTML = `<i class="fas ${sys.icon}"></i>`;
+  
+  document.getElementById('systemDetailName').textContent = sys.name;
+  document.getElementById('systemDetailOrgan').textContent = `Attached to: ${sys.organ}`;
+  
+  // Diseases
+  document.getElementById('systemDiseases').innerHTML = sys.diseases.map(d => `
+    <div class="p-3 rounded-xl bg-white/3 border border-white/5 hover:border-red-500/30 transition cursor-pointer"
+         onclick="startAssessmentWithDisease('${sys.id}', '${d}')">
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full bg-red-400"></div>
+        <span class="text-sm font-medium">${d}</span>
+      </div>
+    </div>
+  `).join('');
+  
+  // Symptoms
+  document.getElementById('systemSymptoms').innerHTML = sys.symptoms.map(s => `
+    <span class="px-3 py-1.5 rounded-full text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20">${s}</span>
+  `).join('');
+  
+  // Pain areas
+  document.getElementById('systemPainAreas').innerHTML = sys.painAreas.map(p => `
+    <div class="flex items-center gap-2 text-sm text-slate-300">
+      <i class="fas fa-location-crosshairs text-emerald-400 text-xs"></i>
+      ${p}
+    </div>
+  `).join('');
+}
+
+// ============ ANATOMY LIST ============
+function initAnatomyList() {
+  const list = document.getElementById('anatomySystemList');
+  list.innerHTML = bodySystemsData.map((sys, i) => `
+    <div class="glass-card rounded-2xl p-4 cursor-pointer flex items-center gap-4" 
+         onclick="selectSystem(${i})"
+         onmouseover="highlightBodySystem('${sys.id}')">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${sys.bgColor};">
+        <i class="fas ${sys.icon} text-lg" style="color:${sys.color};"></i>
+      </div>
+      <div class="flex-1">
+        <div class="font-display font-semibold">${sys.name}</div>
+        <div class="text-xs text-slate-400">Organ: ${sys.organ} · ${sys.diseases.length} conditions</div>
+      </div>
+      <i class="fas fa-chevron-right text-slate-400"></i>
+    </div>
+  `).join('');
+}
+
+function highlightBodySystem(id) {
+  if (window.highlightSystem) window.highlightSystem(id);
+  
+  const sys = bodySystemsData.find(s => s.id === id);
+  if (sys) {
+    document.getElementById('systemLegend').innerHTML = `
+      <span style="color:${sys.color};">●</span> <strong>${sys.name}</strong> — ${sys.organ} | ${sys.diseases.join(', ')}
+    `;
+  }
+}
+
+// ============ ASSESSMENT FLOW ============
+function initStep1() {
+  const container = document.getElementById('step1Systems');
+  container.innerHTML = bodySystemsData.map((sys, i) => `
+    <div class="assessment-sys-card glass-card rounded-xl p-4 cursor-pointer text-center" 
+         onclick="selectStep1System(${i})" data-system="${sys.id}">
+      <div class="w-10 h-10 mx-auto rounded-xl flex items-center justify-center mb-3" style="background:${sys.bgColor};">
+        <i class="fas ${sys.icon}" style="color:${sys.color};"></i>
+      </div>
+      <div class="text-xs font-medium">${sys.shortName}</div>
+    </div>
+  `).join('');
+}
+
+function selectStep1System(index) {
+  assessmentState.system = bodySystemsData[index];
+  document.querySelectorAll('#step1Systems .assessment-sys-card').forEach((el, i) => {
+    el.style.borderColor = i === index ? bodySystemsData[index].color : '';
+    el.style.background = i === index ? bodySystemsData[index].bgColor : '';
+  });
+  document.getElementById('step1Next').disabled = false;
+  document.getElementById('step1Next').style.opacity = '1';
+  document.getElementById('step1Next').style.pointerEvents = 'auto';
+  
+  // Populate step 2
+  initStep2();
+}
+
+function initStep2() {
+  if (!assessmentState.system) return;
+  const container = document.getElementById('step2Diseases');
+  container.innerHTML = assessmentState.system.diseases.map((d, i) => `
+    <div class="assessment-dis-card glass-card rounded-xl p-5 cursor-pointer" 
+         onclick="selectStep2Disease('${d}')" data-disease="${d}">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 rounded-xl bg-red-500/15 flex items-center justify-center">
+          <i class="fas fa-disease text-red-400"></i>
+        </div>
+        <div class="font-display font-semibold">${d}</div>
+      </div>
+      <div class="text-xs text-slate-400">Associated with ${assessmentState.system.organ}</div>
+    </div>
+  `).join('');
+}
+
+function selectStep2Disease(disease) {
+  assessmentState.disease = disease;
+  document.querySelectorAll('#step2Diseases .assessment-dis-card').forEach(el => {
+    el.style.borderColor = el.dataset.disease === disease ? '#ef4444' : '';
+    el.style.background = el.dataset.disease === disease ? 'rgba(239,68,68,0.05)' : '';
+  });
+  document.getElementById('step2Next').disabled = false;
+  document.getElementById('step2Next').style.opacity = '1';
+  document.getElementById('step2Next').style.pointerEvents = 'auto';
+  
+  // Populate step 3
+  initStep3();
+}
+
+function initStep3() {
+  if (!assessmentState.system) return;
+  const container = document.getElementById('step3Symptoms');
+  assessmentState.symptoms = [];
+  container.innerHTML = assessmentState.system.symptoms.map(s => `
+    <label class="symptom-check" onclick="toggleSymptom(this, '${s}')">
+      <div class="check-box"><i class="fas fa-check"></i></div>
+      <span class="text-sm">${s}</span>
+    </label>
+  `).join('');
+}
+
+function toggleSymptom(el, symptom) {
+  el.classList.toggle('active');
+  if (el.classList.contains('active')) {
+    if (!assessmentState.symptoms.includes(symptom)) {
+      assessmentState.symptoms.push(symptom);
+    }
+  } else {
+    assessmentState.symptoms = assessmentState.symptoms.filter(s => s !== symptom);
+  }
+  
+  const nextBtn = document.getElementById('step3Next');
+  if (assessmentState.symptoms.length > 0) {
+    nextBtn.disabled = false;
+    nextBtn.style.opacity = '1';
+    nextBtn.style.pointerEvents = 'auto';
+  } else {
+    nextBtn.disabled = true;
+    nextBtn.style.opacity = '0.5';
+    nextBtn.style.pointerEvents = 'none';
+  }
+}
+
+function nextStep() {
+  if (assessmentState.currentStep < 5) {
+    document.getElementById(`step${assessmentState.currentStep}`).classList.add('hidden');
+    assessmentState.currentStep++;
+    document.getElementById(`step${assessmentState.currentStep}`).classList.remove('hidden');
+    updateStepIndicator();
+    
+    if (assessmentState.currentStep === 5) {
+      populateSummary();
+    }
+  }
+}
+
+function prevStep() {
+  if (assessmentState.currentStep > 1) {
+    document.getElementById(`step${assessmentState.currentStep}`).classList.add('hidden');
+    assessmentState.currentStep--;
+    document.getElementById(`step${assessmentState.currentStep}`).classList.remove('hidden');
+    updateStepIndicator();
+  }
+}
+
+function updateStepIndicator() {
+  document.querySelectorAll('.step-dot').forEach((dot, i) => {
+    dot.classList.remove('active', 'completed');
+    if (i + 1 < assessmentState.currentStep) dot.classList.add('completed');
+    else if (i + 1 === assessmentState.currentStep) dot.classList.add('active');
+  });
+}
+
+function startAssessment() {
+  // Pre-select current system
+  const idx = bodySystemsData.findIndex(s => s.id === selectedSystem.id);
+  if (idx >= 0) {
+    assessmentState.system = bodySystemsData[idx];
+    assessmentState.currentStep = 1;
+    initStep1();
+    selectStep1System(idx);
+    // Jump to step 2
+    nextStep();
+  }
+  document.getElementById('assessment').scrollIntoView({ behavior: 'smooth' });
+}
+
+function startAssessmentWithDisease(systemId, disease) {
+  const sys = bodySystemsData.find(s => s.id === systemId);
+  if (!sys) return;
+  
+  assessmentState.system = sys;
+  assessmentState.disease = disease;
+  assessmentState.currentStep = 1;
+  initStep1();
+  selectStep1System(bodySystemsData.indexOf(sys));
+  initStep2();
+  selectStep2Disease(disease);
+  nextStep(); // to step 3
+  
+  document.getElementById('assessment').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ============ PAIN MAPPER ============
+function initBodySVG() {
+  const frontSVG = `
+    <svg viewBox="0 0 200 460" width="180" height="414" xmlns="http://www.w3.org/2000/svg">
+      <!-- Head -->
+      <ellipse class="body-region" data-region="head" cx="100" cy="35" rx="26" ry="33"/>
+      <!-- Neck -->
+      <path class="body-region" data-region="neck" d="M86 65 L86 82 Q100 87 114 82 L114 65 Z"/>
+      <!-- Left Shoulder -->
+      <path class="body-region" data-region="left-shoulder" d="M60 85 Q55 88 52 95 L58 100 Q63 92 72 90 Z"/>
+      <!-- Right Shoulder -->
+      <path class="body-region" data-region="right-shoulder" d="M140 85 Q145 88 148 95 L142 100 Q137 92 128 90 Z"/>
+      <!-- Chest -->
+      <path class="body-region" data-region="chest" d="M65 90 Q100 84 135 90 L132 170 Q100 178 68 170 Z"/>
+      <!-- Abdomen -->
+      <path class="body-region" data-region="abdomen" d="M68 170 Q100 178 132 170 L128 230 Q100 238 72 230 Z"/>
+      <!-- Pelvis -->
+      <path class="body-region" data-region="pelvis" d="M72 230 Q100 238 128 230 L124 265 Q100 272 76 265 Z"/>
+      <!-- Left Arm -->
+      <path class="body-region" data-region="left-arm" d="M52 95 L42 105 L35 200 L44 210 L54 200 L58 110 Z"/>
+      <!-- Right Arm -->
+      <path class="body-region" data-region="right-arm" d="M148 95 L158 105 L165 200 L156 210 L146 200 L142 110 Z"/>
+      <!-- Left Hand -->
+      <path class="body-region" data-region="left-hand" d="M35 200 L32 220 L38 235 L48 232 L44 210 Z"/>
+      <!-- Right Hand -->
+      <path class="body-region" data-region="right-hand" d="M165 200 L168 220 L162 235 L152 232 L156 210 Z"/>
+      <!-- Left Leg -->
+      <path class="body-region" data-region="left-leg" d="M76 265 L66 275 L62 410 L74 422 L86 410 L86 275 Z"/>
+      <!-- Right Leg -->
+      <path class="body-region" data-region="right-leg" d="M124 265 L134 275 L138 410 L126 422 L114 410 L114 275 Z"/>
+      <!-- Left Foot -->
+      <path class="body-region" data-region="left-foot" d="M62 410 L58 425 L70 432 L78 422 L74 410 Z"/>
+      <!-- Right Foot -->
+      <path class="body-region" data-region="right-foot" d="M138 410 L142 425 L130 432 L122 422 L126 410 Z"/>
+    </svg>
+  `;
+  
+  const backSVG = `
+    <svg viewBox="0 0 200 460" width="180" height="414" xmlns="http://www.w3.org/2000/svg">
+      <!-- Head (back) -->
+      <ellipse class="body-region" data-region="head-back" cx="100" cy="35" rx="26" ry="33"/>
+      <!-- Neck (back) -->
+      <path class="body-region" data-region="neck" d="M86 65 L86 82 Q100 87 114 82 L114 65 Z"/>
+      <!-- Upper Back -->
+      <path class="body-region" data-region="upper-back" d="M62 88 Q100 82 138 88 L134 175 Q100 183 66 175 Z"/>
+      <!-- Lower Back -->
+      <path class="body-region" data-region="lower-back" d="M66 175 Q100 183 134 175 L130 240 Q100 248 70 240 Z"/>
+      <!-- Pelvis (back) -->
+      <path class="body-region" data-region="pelvis" d="M70 240 Q100 248 130 240 L126 275 Q100 282 74 275 Z"/>
+      <!-- Spine -->
+      <path class="body-region" data-region="spine" d="M96 85 L96 275 L104 275 L104 85 Z" opacity="0.5"/>
+      <!-- Left Arm (back) -->
+      <path class="body-region" data-region="left-arm" d="M62 88 L48 98 L40 200 L48 212 L58 200 L62 105 Z"/>
+      <!-- Right Arm (back) -->
+      <path class="body-region" data-region="right-arm" d="M138 88 L152 98 L160 200 L152 212 L142 200 L138 105 Z"/>
+      <!-- Left Hand (back) -->
+      <path class="body-region" data-region="left-hand" d="M40 200 L36 222 L42 238 L52 232 L48 210 Z"/>
+      <!-- Right Hand (back) -->
+      <path class="body-region" data-region="right-hand" d="M160 200 L164 222 L158 238 L148 232 L152 210 Z"/>
+      <!-- Left Leg (back) -->
+      <path class="body-region" data-region="left-leg" d="M74 275 L64 285 L60 415 L72 427 L84 415 L84 285 Z"/>
+      <!-- Right Leg (back) -->
+      <path class="body-region" data-region="right-leg" d="M126 275 L136 285 L140 415 L128 427 L116 415 L116 285 Z"/>
+      <!-- Left Foot (back) -->
+      <path class="body-region" data-region="left-foot" d="M60 415 L56 430 L68 437 L76 427 L72 415 Z"/>
+      <!-- Right Foot (back) -->
+      <path class="body-region" data-region="right-foot" d="M140 415 L144 430 L132 437 L124 427 L128 415 Z"/>
+    </svg>
+  `;
+  
+  document.getElementById('bodyFront').innerHTML = frontSVG;
+  document.getElementById('bodyBack').innerHTML = backSVG;
+  
+  // Add click handlers
+  document.querySelectorAll('.body-region').forEach(region => {
+    region.addEventListener('click', function() {
+      this.classList.toggle('selected');
+      updateSelectedPainAreas();
+    });
+  });
+  
+  // Pre-select pain areas based on system
+  if (assessmentState.system) {
+    assessmentState.system.painAreas.forEach(area => {
+      const regions = painAreaToRegion[area] || [];
+      regions.forEach(r => {
+        const el = document.querySelector(`.body-region[data-region="${r}"]`);
+        if (el) el.classList.add('selected');
+      });
+    });
+    updateSelectedPainAreas();
+  }
+}
+
+function setBodyView(view) {
+  currentBodyView = view;
+  document.getElementById('bodyFront').classList.toggle('hidden', view !== 'front');
+  document.getElementById('bodyBack').classList.toggle('hidden', view !== 'back');
+  document.getElementById('frontViewBtn').classList.toggle('active', view === 'front');
+  document.getElementById('backViewBtn').classList.toggle('active', view === 'back');
+}
+
+function updateSelectedPainAreas() {
+  const selected = document.querySelectorAll('.body-region.selected');
+  const regions = Array.from(selected).map(el => el.dataset.region);
+  
+  // Map SVG regions back to pain area names
+  const painAreas = [];
+  if (regions.includes('head') || regions.includes('head-back')) painAreas.push('Head');
+  if (regions.includes('neck')) painAreas.push('Neck/Throat');
+  if (regions.includes('chest')) painAreas.push('Chest');
+  if (regions.includes('upper-back')) painAreas.push('Upper Back');
+  if (regions.includes('lower-back')) painAreas.push('Lower Back/Kidneys');
+  if (regions.includes('abdomen')) painAreas.push('Abdomen');
+  if (regions.includes('pelvis')) painAreas.push('Pelvis/Groin');
+  if (regions.includes('left-arm') || regions.includes('right-arm')) painAreas.push('Arms');
+  if (regions.includes('left-hand') || regions.includes('right-hand')) painAreas.push('Hands/Wrists');
+  if (regions.includes('left-leg') || regions.includes('right-leg')) painAreas.push('Legs/Knees');
+  if (regions.includes('left-foot') || regions.includes('right-foot')) painAreas.push('Feet/Ankles');
+  if (regions.includes('left-shoulder') || regions.includes('right-shoulder')) painAreas.push('Shoulders');
+  
+  assessmentState.painAreas = [...new Set(painAreas)];
+  document.getElementById('selectedPainAreas').textContent = 
+    assessmentState.painAreas.length > 0 ? assessmentState.painAreas.join(', ') : 'None';
+}
+
+function updateIntensity(val) {
+  assessmentState.intensity = parseInt(val);
+  document.getElementById('intensityValue').textContent = val;
+  // Update bar
+  const bar = document.getElementById('intensityBar');
+  const colors = val <= 3 ? '#10b981' : val <= 6 ? '#f59e0b' : '#ef4444';
+  bar.style.background = colors;
+  bar.style.width = (val * 10) + '%';
+}
+
+function selectDuration(el, duration) {
+  document.querySelectorAll('#durationOptions .symptom-check').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  assessmentState.duration = duration;
+  selectedDuration = duration;
+}
+
+// ============ CONSULTATION DRAWER ============
+function populateSummary() {
+  document.getElementById('summarySystem').textContent = assessmentState.system?.name || '—';
+  document.getElementById('summaryDisease').textContent = assessmentState.disease || '—';
+  document.getElementById('summarySymptoms').textContent = assessmentState.symptoms.join(', ') || '—';
+  document.getElementById('summaryPain').textContent = assessmentState.painAreas.join(', ') || '—';
+  document.getElementById('summaryIntensity').textContent = `${assessmentState.intensity}/10` || '—';
+  document.getElementById('summaryDuration').textContent = assessmentState.duration || '—';
+}
+
+function openConsultationDrawer() {
+  // Populate drawer fields
+  document.getElementById('drawerSystem').textContent = assessmentState.system?.name || '—';
+  document.getElementById('drawerDisease').textContent = assessmentState.disease || '—';
+  document.getElementById('drawerSymptoms').textContent = assessmentState.symptoms.join(', ') || '—';
+  document.getElementById('drawerPain').textContent = assessmentState.painAreas.join(', ') || '—';
+  document.getElementById('drawerIntensity').textContent = `${assessmentState.intensity}/10` || '—';
+  document.getElementById('drawerDuration').textContent = assessmentState.duration || '—';
+  
+  document.getElementById('drawerOverlay').classList.add('open');
+  document.getElementById('consultationDrawer').classList.add('open');
+}
+
+function closeConsultationDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('consultationDrawer').classList.remove('open');
+}
+
+function selectGender(el, gender) {
+  document.querySelectorAll('#consultationForm .symptom-check').forEach(s => {
+    if (s.querySelector('span').textContent === 'Male' || s.querySelector('span').textContent === 'Female' || s.querySelector('span').textContent === 'Other') {
+      s.classList.remove('active');
+    }
+  });
+  el.classList.add('active');
+  selectedGender = gender;
+}
+
+function selectConsultType(el, type) {
+  el.parentElement.querySelectorAll('.symptom-check').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  selectedConsultType = type;
+}
+
+function submitConsultation(event) {
+  event.preventDefault();
+  closeConsultationDrawer();
+  showToast('Appointment Booked!', 'Your consultation has been scheduled. Check your email for details.');
+  // Reset
+  setTimeout(() => {
+    assessmentState = { system: null, disease: null, symptoms: [], painAreas: [], intensity: 5, duration: null, currentStep: 1 };
+    document.querySelectorAll('.assessment-step').forEach(s => s.classList.add('hidden'));
+    document.getElementById('step1').classList.remove('hidden');
+    updateStepIndicator();
+    document.querySelectorAll('.symptom-check.active').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.body-region.selected').forEach(r => r.classList.remove('selected'));
+    document.getElementById('selectedPainAreas').textContent = 'None';
+    document.getElementById('intensitySlider').value = 5;
+    updateIntensity(5);
+  }, 1000);
+}
+
+function submitGeneralConsult(event) {
+  event.preventDefault();
+  showToast('Consultation Requested!', 'Our team will contact you within 24 hours to schedule your appointment.');
+  event.target.reset();
+}
+
+// ============ LOGIN MODAL ============
+function openLoginModal() {
+  document.getElementById('loginModal').classList.add('open');
+}
+
+function closeLoginModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('loginModal').classList.remove('open');
+}
+
+function loginAs(type) {
+  closeLoginModal();
+  if (type === 'patient') {
+    switchPortal('patient');
+    showToast('Patient Login', 'Redirecting to OpenEMR Patient Portal...');
+    setTimeout(() => document.getElementById('portals').scrollIntoView({ behavior: 'smooth' }), 500);
+  } else {
+    switchPortal('doctor');
+    showToast('Doctor Login', 'Redirecting to OpenEMR Provider Portal...');
+    setTimeout(() => document.getElementById('portals').scrollIntoView({ behavior: 'smooth' }), 500);
+  }
+}
+
+// ============ PORTAL TABS ============
+function switchPortal(type) {
+  const patientTab = document.getElementById('patientTab');
+  const doctorTab = document.getElementById('doctorTab');
+  const patientPortal = document.getElementById('patientPortal');
+  const doctorPortal = document.getElementById('doctorPortal');
+  
+  if (type === 'patient') {
+    patientTab.classList.add('active');
+    doctorTab.classList.remove('active');
+    patientPortal.classList.remove('hidden');
+    doctorPortal.classList.add('hidden');
+  } else {
+    doctorTab.classList.add('active');
+    patientTab.classList.remove('active');
+    doctorPortal.classList.remove('hidden');
+    patientPortal.classList.add('hidden');
+  }
+}
+
+// ============ WEBINARS ============
+function initWebinars() {
+  const grid = document.getElementById('webinarGrid');
+  grid.innerHTML = webinarsData.map((w, i) => `
+    <div class="glass-card rounded-2xl overflow-hidden webinar-card" data-category="${w.category}">
+      <div class="relative h-44 overflow-hidden" style="background: linear-gradient(135deg, ${w.color}22, ${w.color}05);">
+        <img src="https://picsum.photos/seed/${w.image}/400/300.jpg" class="w-full h-full object-cover opacity-40" alt="${w.title}">
+        <div class="absolute inset-0" style="background: linear-gradient(135deg, ${w.color}33, transparent);"></div>
+        <div class="absolute top-3 left-3 px-2.5 py-1 rounded-full text-xs font-mono" style="background:${w.color}33;color:${w.color};">
+          ${w.catLabel}
+        </div>
+        <div class="absolute bottom-3 right-3 w-10 h-10 rounded-full glass flex items-center justify-center">
+          <i class="fas fa-play text-xs text-white"></i>
+        </div>
+      </div>
+      <div class="p-5">
+        <h3 class="font-display font-semibold text-lg mb-2 leading-tight">${w.title}</h3>
+        <div class="flex items-center gap-2 mb-3">
+          <img src="https://picsum.photos/seed/${w.image}doc/40/40.jpg" class="w-7 h-7 rounded-full" alt="">
+          <span class="text-xs text-slate-400">${w.speaker}</span>
+        </div>
+        <div class="flex items-center justify-between text-xs text-slate-400 mb-4">
+          <span class="flex items-center gap-1.5"><i class="far fa-calendar"></i> ${w.date}</span>
+          <span class="flex items-center gap-1.5"><i class="far fa-clock"></i> ${w.duration}</span>
+        </div>
+        <button onclick="registerWebinar('${w.title}')" class="btn-ghost w-full justify-center">
+          <i class="fas fa-ticket"></i> Register
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterWebinars(category) {
+  document.querySelectorAll('#webinarCategories .tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.cat === category);
+  });
+  
+  document.querySelectorAll('.webinar-card').forEach(card => {
+    if (category === 'all' || card.dataset.category === category) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function registerWebinar(title) {
+  showToast('Registered!', `You've been registered for "${title}". Check your patient portal for details.`);
+}
+
+// ============ DOCTORS ============
+function initDoctors() {
+  const grid = document.getElementById('doctorGrid');
+  grid.innerHTML = doctorsData.map((d, i) => `
+    <div class="glass-card rounded-3xl overflow-hidden group">
+      <div class="relative h-64 overflow-hidden">
+        <img src="https://picsum.photos/seed/${d.image}/400/500.jpg" class="w-full h-full object-cover group-hover:scale-105 transition duration-700" alt="${d.name}">
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent"></div>
+        <div class="absolute bottom-4 left-4 right-4">
+          <div class="font-display font-bold text-xl text-white">${d.name}</div>
+          <div class="text-sm text-emerald-400">${d.designation}</div>
+        </div>
+        <div class="absolute top-4 right-4 px-3 py-1.5 rounded-full glass-strong text-xs font-mono text-white">
+          ${d.experience} yrs exp
+        </div>
+      </div>
+      <div class="p-5 space-y-4">
+        <div>
+          <div class="text-xs text-slate-500 font-mono mb-1">QUALIFICATIONS</div>
+          <div class="text-sm text-slate-300">${d.qualifications}</div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-500 font-mono mb-2">SPECIALIZATIONS</div>
+          <div class="flex flex-wrap gap-1.5">
+            ${d.specializations.map(s => `<span class="px-2.5 py-1 rounded-full text-xs bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${s}</span>`).join('')}
+          </div>
+        </div>
+        <div>
+          <div class="text-xs text-slate-500 font-mono mb-2">ACHIEVEMENTS</div>
+          <div class="space-y-1">
+            ${d.achievements.map(a => `
+              <div class="flex items-start gap-2 text-xs text-slate-300">
+                <i class="fas fa-award text-amber-400 mt-0.5"></i>
+                <span>${a}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="flex gap-2 pt-2">
+          <button onclick="bookDoctor('${d.name}')" class="btn-primary flex-1 justify-center text-xs">
+            <i class="fas fa-calendar-check"></i> Book
+          </button>
+          <button onclick="viewDoctorProfile('${d.name}')" class="btn-secondary flex-1 justify-center text-xs">
+            <i class="fas fa-user"></i> Profile
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function bookDoctor(name) {
+  showToast('Booking Started', `Opening consultation form for ${name}...`);
+  setTimeout(() => {
+    openConsultationDrawer();
+    document.getElementById('drawerSystem').textContent = 'General Consultation';
+    document.getElementById('drawerDisease').textContent = `With ${name}`;
+  }, 500);
+}
+
+function viewDoctorProfile(name) {
+  showToast('Profile', `Loading full profile for ${name}...`);
+}
+
+// ============ TOAST ============
+function showToast(title, msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastMsg').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 4000);
+}
+
+// ============ SCROLL HELPER ============
+function scrollToSection(id) {
+  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+}
+
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('hidden');
+}
+
+// Close modal on Escape
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeLoginModal();
+    closeConsultationDrawer();
+  }
+});
+</script>
+
+</body>
+</html>
